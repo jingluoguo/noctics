@@ -18,6 +18,12 @@ function parseHash(hash: string) {
   return { type: match[1] as 'writing' | 'travel', slug: decodeURIComponent(match[2]) };
 }
 
+function parseSectionHash(hash: string) {
+  const match = hash.match(/^#([a-zA-Z0-9_-]+)$/);
+  if (!match) return null;
+  return match[1];
+}
+
 function App() {
   const config = useSiteConfig();
   const [hash, setHash] = useState(window.location.hash);
@@ -63,6 +69,17 @@ function App() {
       );
     }
   }
+
+  useEffect(() => {
+    if (route) return;
+    const sectionId = parseSectionHash(hash);
+    if (!sectionId) return;
+    const element = document.getElementById(sectionId);
+    if (!element) return;
+    requestAnimationFrame(() => {
+      element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    });
+  }, [hash, route]);
 
   return (
     <div className="site-shell">
