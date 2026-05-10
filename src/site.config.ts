@@ -7,11 +7,18 @@ export type WorkItem = {
   name: string;
   desc: string;
   stack: string;
+  website?: string;
+  logo?: string;
+  platforms?: {
+    name: string;
+    url: string;
+  }[];
 };
 
 export type TravelItem = {
   city: string;
   note: string;
+  summary?: string;
   markdown?: string;
   date?: string;
   tags?: string[];
@@ -26,6 +33,7 @@ export type PhotoItem = {
 export type WritingArticle = {
   title: string;
   markdown: string;
+  summary?: string;
   category?: string;
   tags?: string[];
 };

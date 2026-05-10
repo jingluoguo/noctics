@@ -14,6 +14,39 @@ You can update this file to change:
 
 No component edits are required for normal content updates.
 
+### Works section app config (recommended)
+
+Put one config file per app into:
+
+- `src/content/apps/*.ts`
+
+Example:
+
+```ts
+import type { WorkItem } from '../../site.config';
+
+const app: WorkItem = {
+  name: 'Nebula Journal',
+  desc: '关系与事件管理应用，强调信息密度与情绪化表达。',
+  stack: 'Flutter · GetX · SQLite',
+  logo: '/app-logos/nebula-journal.svg',
+  website: 'https://example.com/nebula-journal',
+  platforms: [
+    { name: 'iOS 下载', url: 'https://apps.apple.com/' },
+    { name: 'Android 下载', url: 'https://play.google.com/store' }
+  ]
+};
+
+export default app;
+```
+
+Rules:
+
+- Each app is one independent config file
+- Homepage auto-discovers all app configs
+- Card displays name, stack, desc, logo, platform download links
+- Clicking app card opens `website`
+
 ### Writing section markdown (recommended)
 
 Put markdown files into:
@@ -24,7 +57,7 @@ Each file can use:
 
 - First line `# 标题` (recommended)
 - Then article markdown body
-- Optional front matter for category/tags
+- Optional front matter for `category` / `tags` / `summary`
 
 The writing section auto-discovers and renders these files.
 When markdown files exist, they take priority over `site.config.ts` writing items.
@@ -36,6 +69,7 @@ Example:
 ---
 category: Flutter
 tags: form, state-management, ux
+summary: 这一篇文章的列表摘要文案
 ---
 # 文章标题
 
@@ -50,6 +84,7 @@ If no local markdown files are present, `sections.writing.items` in `site.config
 {
   title: string;
   markdown: string;
+  summary?: string;
   category?: string;
   tags?: string[];
 }[]
@@ -77,6 +112,7 @@ Recommended front matter:
 city: Kyoto
 date: 2026-04-08
 tags: japan, street, rain-night
+summary: 这一篇游记的列表摘要文案
 ---
 # 京都雨夜
 
@@ -87,6 +123,7 @@ Rules:
 
 - `city` is used as card title (fallback to markdown `#` heading)
 - `date` and `tags` render as metadata badges
+- `summary` is used as list summary (fallback to auto-generated summary from body)
 - List shows a one-line summary (ellipsis when overflow)
 - Each item has a detail page
 - When travel markdown files exist, they take priority over `site.config.ts` travel items

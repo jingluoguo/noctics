@@ -1,6 +1,7 @@
 ---
 category: Flutter
 tags: form, state-management, ux
+summary: 拆分输入、校验、提交三层，提升复杂表单的稳定性与可维护性。
 ---
 # Flutter 中复杂表单与状态管理实践
 

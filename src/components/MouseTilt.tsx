@@ -1,10 +1,11 @@
-import { type MouseEvent, type PropsWithChildren, useRef } from 'react';
+import { type HTMLAttributes, type MouseEvent, type PropsWithChildren, useRef } from 'react';
 
 type MouseTiltProps = PropsWithChildren<{
   className?: string;
-}>;
+}> &
+  Omit<HTMLAttributes<HTMLDivElement>, 'onMouseMove' | 'onMouseLeave'>;
 
-export function MouseTilt({ className, children }: MouseTiltProps) {
+export function MouseTilt({ className, children, ...rest }: MouseTiltProps) {
   const ref = useRef<HTMLDivElement | null>(null);
 
   const onMove = (event: MouseEvent<HTMLDivElement>) => {
@@ -39,6 +40,7 @@ export function MouseTilt({ className, children }: MouseTiltProps) {
       className={className}
       onMouseMove={onMove}
       onMouseLeave={reset}
+      {...rest}
     >
       {children}
     </div>

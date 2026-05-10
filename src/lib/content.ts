@@ -1,4 +1,5 @@
 import { siteConfig } from '../site.config';
+import type { WorkItem } from '../site.config';
 
 type MarkdownModuleMap = Record<string, string>;
 
@@ -31,6 +32,12 @@ const travelMarkdownModules = import.meta.glob('/src/content/travel/**/*.md', {
   query: '?raw',
   import: 'default'
 }) as MarkdownModuleMap;
+
+type WorkAppModuleMap = Record<string, WorkItem>;
+const workAppModules = import.meta.glob('/src/content/apps/*.ts', {
+  eager: true,
+  import: 'default'
+}) as WorkAppModuleMap;
 
 function getFileName(filePath: string) {
   return filePath.split('/').pop()?.replace(/\.md$/i, '') ?? 'untitled';
@@ -93,6 +100,12 @@ function parseTags(value?: string) {
   return value.split(',').map((tag) => tag.trim()).filter(Boolean);
 }
 
+function pickSummary(summary: string | undefined, markdown: string) {
+  const cleaned = summary?.trim();
+  if (cleaned) return cleaned;
+  return toSummary(markdown);
+}
+
 export function getWritingItems(): WritingContentItem[] {
   const localItems = Object.entries(writingMarkdownModules)
     .sort(([a], [b]) => b.localeCompare(a))
@@ -104,7 +117,7 @@ export function getWritingItems(): WritingContentItem[] {
         slug: toSlug(getFileName(filePath)),
         title,
         markdown: normalized,
-        summary: toSummary(normalized),
+        summary: pickSummary(frontMatter.summary, normalized),
         category: frontMatter.category,
         tags: parseTags(frontMatter.tags)
       };
@@ -116,7 +129,7 @@ export function getWritingItems(): WritingContentItem[] {
     slug: toSlug(item.title),
     title: item.title,
     markdown: item.markdown,
-    summary: toSummary(item.markdown),
+    summary: pickSummary(item.summary, item.markdown),
     category: item.category,
     tags: item.tags ?? []
   }));
@@ -133,7 +146,7 @@ export function getTravelItems(): TravelContentItem[] {
         slug: toSlug(getFileName(filePath)),
         city: frontMatter.city || title,
         markdown: normalized,
-        summary: toSummary(normalized),
+        summary: pickSummary(frontMatter.summary, normalized),
         date: frontMatter.date,
         tags: parseTags(frontMatter.tags)
       };
@@ -145,8 +158,18 @@ export function getTravelItems(): TravelContentItem[] {
     slug: toSlug(item.city),
     city: item.city,
     markdown: item.markdown ?? item.note,
-    summary: toSummary(item.markdown ?? item.note),
+    summary: pickSummary(item.summary, item.markdown ?? item.note),
     date: item.date,
     tags: item.tags ?? []
   }));
+}
+
+export function getWorkItems(): WorkItem[] {
+  const localItems = Object.entries(workAppModules)
+    .sort(([a], [b]) => b.localeCompare(a))
+    .map(([, app]) => app)
+    .filter((app) => app.name && app.desc && app.stack);
+
+  if (localItems.length) return localItems;
+  return siteConfig.sections.works.items;
 }

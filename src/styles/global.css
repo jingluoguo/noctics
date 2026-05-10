@@ -284,6 +284,42 @@ h3 { margin: 0 0 8px; font-size: 1.06rem; }
 
 .card p { margin: 0; color: var(--muted); }
 .card span { margin-top: 14px; display: inline-block; font-size: 12px; color: #d5eaff; background: rgba(95, 135, 255, 0.26); padding: 4px 10px; border-radius: 999px; }
+.work-card-clickable { cursor: pointer; }
+.work-link { display: block; color: inherit; text-decoration: none; }
+.work-head { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
+.work-logo {
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  object-fit: cover;
+  border: 1px solid rgba(151, 180, 219, 0.26);
+}
+.work-logo-fallback {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: #d5eaff;
+  background: rgba(95, 135, 255, 0.26);
+  font-size: 14px;
+  font-weight: 700;
+}
+.work-platforms {
+  margin-top: 14px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.work-platform-link {
+  display: inline-block;
+  text-decoration: none;
+  font-size: 12px;
+  color: #dff4ff;
+  border: 1px solid rgba(124, 229, 255, 0.34);
+  padding: 4px 10px;
+  border-radius: 999px;
+  background: rgba(124, 229, 255, 0.08);
+}
+.work-platform-link:hover { background: rgba(124, 229, 255, 0.16); }
 
 .article-shell { border: 1px solid var(--line); border-radius: var(--radius-lg); overflow: hidden; background: linear-gradient(130deg, rgba(15, 24, 39, 0.88), rgba(8, 14, 24, 0.88)); }
 .article-item { border-bottom: 1px solid var(--line); }
