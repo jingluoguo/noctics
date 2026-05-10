@@ -13,9 +13,10 @@ import { getTravelItems, getWorkItems, getWritingItems } from './lib/content';
 import { DetailPage } from './sections/DetailPage';
 
 function parseHash(hash: string) {
-  const match = hash.match(/^#\/(writing|travel)\/([^/]+)$/);
+  const match = hash.match(/^#\/(writing|travel)\/([^/]+?)(?:\/page\/(\d+))?$/);
   if (!match) return null;
-  return { type: match[1] as 'writing' | 'travel', slug: decodeURIComponent(match[2]) };
+  const page = match[3] ? Math.max(1, Number(match[3])) : undefined;
+  return { type: match[1] as 'writing' | 'travel', slug: decodeURIComponent(match[2]), page };
 }
 
 function parseSectionHash(hash: string) {
@@ -163,12 +164,12 @@ function App() {
     const item = writingItems.find((entry) => entry.slug === route.slug);
     if (item) {
       const meta = [item.category, ...item.tags.map((tag) => `#${tag}`)].filter(Boolean) as string[];
+      const backHref = route.page ? buildListPageHref('writing', route.page) : '#writing';
       detailContent = (
         <DetailPage
           title={item.title}
           markdown={item.markdown}
-          backHref="#writing"
-          backLabel="返回文章列表"
+          backHref={backHref}
           meta={meta}
         />
       );
@@ -178,12 +179,12 @@ function App() {
     const item = travelItems.find((entry) => entry.slug === route.slug);
     if (item) {
       const meta = [item.date, ...item.tags.map((tag) => `#${tag}`)].filter(Boolean) as string[];
+      const backHref = route.page ? buildListPageHref('travel', route.page) : '#travel';
       detailContent = (
         <DetailPage
           title={item.city}
           markdown={item.markdown}
-          backHref="#travel"
-          backLabel="返回游记列表"
+          backHref={backHref}
           meta={meta}
         />
       );
@@ -198,7 +199,7 @@ function App() {
     listContent = (
       <>
         <section className="container section detail-page">
-          <a className="detail-back" href="#works">返回首页作品区</a>
+          <a className="detail-back" href="#works">返回</a>
           <Works config={config} items={pagedItems} />
         </section>
         <Pagination type="works" page={page} total={workItems.length} pageSize={pageSize} />
@@ -212,8 +213,8 @@ function App() {
     listContent = (
       <>
         <section className="container section detail-page">
-          <a className="detail-back" href="#writing">返回首页文章区</a>
-          <Writing config={config} items={pagedItems} />
+          <a className="detail-back" href="#writing">返回</a>
+          <Writing config={config} items={pagedItems} listPage={page} />
         </section>
         <Pagination type="writing" page={page} total={writingItems.length} pageSize={pageSize} />
       </>
@@ -226,8 +227,8 @@ function App() {
     listContent = (
       <>
         <section className="container section detail-page">
-          <a className="detail-back" href="#travel">返回首页游记区</a>
-          <Travel config={config} items={pagedItems} />
+          <a className="detail-back" href="#travel">返回</a>
+          <Travel config={config} items={pagedItems} listPage={page} />
         </section>
         <Pagination type="travel" page={page} total={travelItems.length} pageSize={pageSize} />
       </>

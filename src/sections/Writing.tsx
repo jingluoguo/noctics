@@ -5,11 +5,12 @@ import type { SiteConfig } from '../site.config';
 type WritingProps = {
   config: SiteConfig;
   items?: WritingContentItem[];
+  listPage?: number;
   moreHref?: string;
   moreLabel?: string;
 };
 
-export function Writing({ config, items, moreHref, moreLabel }: WritingProps) {
+export function Writing({ config, items, listPage, moreHref, moreLabel }: WritingProps) {
   const section = config.sections.writing;
   const visibleItems = items ?? getWritingItems();
 
@@ -26,7 +27,7 @@ export function Writing({ config, items, moreHref, moreLabel }: WritingProps) {
       <div className="article-shell">
         {visibleItems.map((post) => (
           <article key={post.slug} className="article-item">
-            <a className="article-link" href={`#/writing/${post.slug}`}>
+            <a className="article-link" href={`#/writing/${post.slug}${listPage ? `/page/${listPage}` : ''}`}>
               <span>
                 <strong>{post.title}</strong>
                 {(post.category || post.tags?.length) && (

@@ -6,11 +6,12 @@ import type { SiteConfig } from '../site.config';
 type TravelProps = {
   config: SiteConfig;
   items?: TravelContentItem[];
+  listPage?: number;
   moreHref?: string;
   moreLabel?: string;
 };
 
-export function Travel({ config, items, moreHref, moreLabel }: TravelProps) {
+export function Travel({ config, items, listPage, moreHref, moreLabel }: TravelProps) {
   const section = config.sections.travel;
   const visibleItems = items ?? getTravelItems();
 
@@ -27,7 +28,7 @@ export function Travel({ config, items, moreHref, moreLabel }: TravelProps) {
       <div className="split-layout">
         {visibleItems.map((trip) => (
           <MouseTilt key={trip.city} className="travel-item tilt-card">
-            <a className="travel-link" href={`#/travel/${trip.slug}`}>
+            <a className="travel-link" href={`#/travel/${trip.slug}${listPage ? `/page/${listPage}` : ''}`}>
               <h3>{trip.city}</h3>
               {(trip.date || trip.tags?.length) && (
                 <div className="travel-meta">

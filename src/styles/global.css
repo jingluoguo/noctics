@@ -475,9 +475,20 @@ h3 { margin: 0 0 8px; font-size: 1.06rem; }
 .detail-page { min-height: calc(100svh - 220px); }
 .detail-back {
   display: inline-flex;
+  align-items: center;
+  gap: 8px;
   margin-bottom: 14px;
   color: #9cc9ff;
   text-decoration: none;
+}
+.detail-back::before {
+  content: '';
+  width: 8px;
+  height: 8px;
+  border-left: 2px solid currentColor;
+  border-bottom: 2px solid currentColor;
+  transform: rotate(45deg);
+  margin-left: 2px;
 }
 .detail-body {
   margin-top: 12px;

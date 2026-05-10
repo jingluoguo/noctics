@@ -4,11 +4,11 @@ type DetailPageProps = {
   title: string;
   markdown: string;
   backHref: string;
-  backLabel: string;
+  backLabel?: string;
   meta?: string[];
 };
 
-export function DetailPage({ title, markdown, backHref, backLabel, meta = [] }: DetailPageProps) {
+export function DetailPage({ title, markdown, backHref, backLabel = '返回', meta = [] }: DetailPageProps) {
   return (
     <section className="container section detail-page">
       <a className="detail-back" href={backHref}>
