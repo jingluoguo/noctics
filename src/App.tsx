@@ -9,7 +9,7 @@ import { Travel } from './sections/Travel';
 import { Photography } from './sections/Photography';
 import { Footer } from './components/Footer';
 import { useSiteConfig } from './hooks/useSiteConfig';
-import { getTravelItems, getWritingItems } from './lib/content';
+import { getTravelItems, getWorkItems, getWritingItems } from './lib/content';
 import { DetailPage } from './sections/DetailPage';
 
 function parseHash(hash: string) {
@@ -24,6 +24,102 @@ function parseSectionHash(hash: string) {
   return match[1];
 }
 
+function parseListHash(hash: string) {
+  const match = hash.match(/^#\/(works|writing|travel)(?:\/page\/(\d+))?$/);
+  if (!match) return null;
+  const page = Math.max(1, Number(match[2] || 1));
+  return { type: match[1] as 'works' | 'writing' | 'travel', page };
+}
+
+function buildListPageHref(type: 'works' | 'writing' | 'travel', page: number) {
+  return `#/${type}/page/${page}`;
+}
+
+function normalizePage(page: number, total: number, pageSize: number) {
+  const pageCount = Math.max(1, Math.ceil(total / pageSize));
+  return Math.min(Math.max(1, page), pageCount);
+}
+
+function paginate<T>(items: T[], page: number, pageSize: number) {
+  const start = (page - 1) * pageSize;
+  return items.slice(start, start + pageSize);
+}
+
+function buildCompactPages(currentPage: number, pageCount: number): Array<number | 'ellipsis'> {
+  if (pageCount <= 7) {
+    return Array.from({ length: pageCount }, (_, index) => index + 1);
+  }
+
+  const pages = new Set<number>([1, pageCount, currentPage - 1, currentPage, currentPage + 1]);
+  const normalized = Array.from(pages)
+    .filter((page) => page >= 1 && page <= pageCount)
+    .sort((a, b) => a - b);
+
+  const output: Array<number | 'ellipsis'> = [];
+  for (let index = 0; index < normalized.length; index += 1) {
+    const current = normalized[index];
+    const prev = normalized[index - 1];
+    if (index > 0 && current - prev > 1) {
+      output.push('ellipsis');
+    }
+    output.push(current);
+  }
+  return output;
+}
+
+function Pagination({
+  type,
+  page,
+  total,
+  pageSize
+}: {
+  type: 'works' | 'writing' | 'travel';
+  page: number;
+  total: number;
+  pageSize: number;
+}) {
+  const pageCount = Math.max(1, Math.ceil(total / pageSize));
+  if (pageCount <= 1) return null;
+  const currentPage = Math.min(page, pageCount);
+  const prevPage = Math.max(1, currentPage - 1);
+  const nextPage = Math.min(pageCount, currentPage + 1);
+  const compactPages = buildCompactPages(currentPage, pageCount);
+
+  return (
+    <div className="container pagination">
+      <a
+        className={`pagination-link ${currentPage <= 1 ? 'pagination-disabled' : ''}`}
+        href={buildListPageHref(type, prevPage)}
+      >
+        上一页
+      </a>
+      <div className="pagination-pages">
+        {compactPages.map((item, index) =>
+          item === 'ellipsis' ? (
+            <span key={`${type}-ellipsis-${index}`} className="pagination-ellipsis">
+              ...
+            </span>
+          ) : (
+            <a
+              key={`${type}-page-${item}`}
+              className={`pagination-link ${item === currentPage ? 'pagination-current' : ''}`}
+              href={buildListPageHref(type, item)}
+            >
+              {item}
+            </a>
+          )
+        )}
+      </div>
+      <a
+        className={`pagination-link ${currentPage >= pageCount ? 'pagination-disabled' : ''}`}
+        href={buildListPageHref(type, nextPage)}
+      >
+        下一页
+      </a>
+    </div>
+  );
+}
+
 function App() {
   const config = useSiteConfig();
   const [hash, setHash] = useState(window.location.hash);
@@ -35,8 +131,10 @@ function App() {
   }, []);
 
   const route = useMemo(() => parseHash(hash), [hash]);
+  const listRoute = useMemo(() => parseListHash(hash), [hash]);
   const writingItems = useMemo(() => getWritingItems(), []);
   const travelItems = useMemo(() => getTravelItems(), []);
+  const workItems = useMemo(() => getWorkItems(), []);
 
   let detailContent: ReactNode = null;
   if (route?.type === 'writing') {
@@ -70,8 +168,52 @@ function App() {
     }
   }
 
+  let listContent: ReactNode = null;
+  if (listRoute?.type === 'works') {
+    const pageSize = 12;
+    const page = normalizePage(listRoute.page, workItems.length, pageSize);
+    const pagedItems = paginate(workItems, page, pageSize);
+    listContent = (
+      <>
+        <section className="container section detail-page">
+          <a className="detail-back" href="#works">返回首页作品区</a>
+          <Works config={config} items={pagedItems} />
+        </section>
+        <Pagination type="works" page={page} total={workItems.length} pageSize={pageSize} />
+      </>
+    );
+  }
+  if (listRoute?.type === 'writing') {
+    const pageSize = 12;
+    const page = normalizePage(listRoute.page, writingItems.length, pageSize);
+    const pagedItems = paginate(writingItems, page, pageSize);
+    listContent = (
+      <>
+        <section className="container section detail-page">
+          <a className="detail-back" href="#writing">返回首页文章区</a>
+          <Writing config={config} items={pagedItems} />
+        </section>
+        <Pagination type="writing" page={page} total={writingItems.length} pageSize={pageSize} />
+      </>
+    );
+  }
+  if (listRoute?.type === 'travel') {
+    const pageSize = 12;
+    const page = normalizePage(listRoute.page, travelItems.length, pageSize);
+    const pagedItems = paginate(travelItems, page, pageSize);
+    listContent = (
+      <>
+        <section className="container section detail-page">
+          <a className="detail-back" href="#travel">返回首页游记区</a>
+          <Travel config={config} items={pagedItems} />
+        </section>
+        <Pagination type="travel" page={page} total={travelItems.length} pageSize={pageSize} />
+      </>
+    );
+  }
+
   useEffect(() => {
-    if (route) return;
+    if (route || listRoute) return;
     const sectionId = parseSectionHash(hash);
     if (!sectionId) return;
     const element = document.getElementById(sectionId);
@@ -79,7 +221,14 @@ function App() {
     requestAnimationFrame(() => {
       element.scrollIntoView({ behavior: 'smooth', block: 'start' });
     });
-  }, [hash, route]);
+  }, [hash, route, listRoute]);
+
+  useEffect(() => {
+    if (!listRoute) return;
+    requestAnimationFrame(() => {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+  }, [listRoute?.type, listRoute?.page]);
 
   return (
     <div className="site-shell">
@@ -92,12 +241,14 @@ function App() {
       <main>
         {detailContent ? (
           detailContent
+        ) : listContent ? (
+          listContent
         ) : (
           <>
             <Hero config={config} />
-            <Works config={config} />
-            <Writing config={config} />
-            <Travel config={config} />
+            <Works config={config} items={workItems.slice(0, 6)} moreHref="#/works/page/1" moreLabel="浏览全部作品" />
+            <Writing config={config} items={writingItems.slice(0, 6)} moreHref="#/writing/page/1" moreLabel="浏览全部文章" />
+            <Travel config={config} items={travelItems.slice(0, 6)} moreHref="#/travel/page/1" moreLabel="浏览全部游记" />
             <Photography config={config} />
           </>
         )}

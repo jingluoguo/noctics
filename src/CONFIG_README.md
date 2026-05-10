@@ -44,6 +44,7 @@ Rules:
 
 - Each app is one independent config file
 - Homepage auto-discovers all app configs
+- Homepage shows latest 5 apps
 - Card displays name, stack, desc, logo, platform download links
 - Clicking app card opens `website`
 
@@ -62,6 +63,7 @@ Each file can use:
 The writing section auto-discovers and renders these files.
 When markdown files exist, they take priority over `site.config.ts` writing items.
 Writing list shows a one-line summary (ellipsis when overflow), and each item has a detail page.
+- Homepage shows latest 5 articles
 
 Example:
 
@@ -126,12 +128,23 @@ Rules:
 - `summary` is used as list summary (fallback to auto-generated summary from body)
 - List shows a one-line summary (ellipsis when overflow)
 - Each item has a detail page
+- Homepage shows latest 5 travel notes
 - When travel markdown files exist, they take priority over `site.config.ts` travel items
 
 ## Detail route format
 
 - Writing detail: `#/writing/<slug>`
 - Travel detail: `#/travel/<slug>`
+
+## List page route format
+
+- Works list: `#/works/page/<n>`
+- Writing list: `#/writing/page/<n>`
+- Travel list: `#/travel/page/<n>`
+
+List pages support pagination:
+
+- Page size is fixed at 12
 
 ## CMS mode (optional)
 

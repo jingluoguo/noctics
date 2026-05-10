@@ -1,16 +1,31 @@
 import { MouseTilt } from '../components/MouseTilt';
 import { getWorkItems } from '../lib/content';
 import type { SiteConfig } from '../site.config';
+import type { WorkItem } from '../site.config';
 
-export function Works({ config }: { config: SiteConfig }) {
+type WorksProps = {
+  config: SiteConfig;
+  items?: WorkItem[];
+  moreHref?: string;
+  moreLabel?: string;
+};
+
+export function Works({ config, items, moreHref, moreLabel }: WorksProps) {
   const section = config.sections.works;
-  const items = getWorkItems();
+  const visibleItems = items ?? getWorkItems();
 
   return (
     <section className="container section" id={section.id}>
-      <h2>{section.title}</h2>
+      <div className="section-head">
+        <h2>{section.title}</h2>
+        {moreHref && moreLabel ? (
+          <a className="section-more" href={moreHref}>
+            {moreLabel}
+          </a>
+        ) : null}
+      </div>
       <div className="card-grid">
-        {items.map((app) => (
+        {visibleItems.map((app) => (
           <MouseTilt
             key={app.name}
             className={`card tilt-card ${app.website ? 'work-card-clickable' : ''}`}

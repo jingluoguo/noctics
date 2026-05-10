@@ -1,16 +1,31 @@
 import { MouseTilt } from '../components/MouseTilt';
 import { getTravelItems } from '../lib/content';
+import type { TravelContentItem } from '../lib/content';
 import type { SiteConfig } from '../site.config';
 
-export function Travel({ config }: { config: SiteConfig }) {
+type TravelProps = {
+  config: SiteConfig;
+  items?: TravelContentItem[];
+  moreHref?: string;
+  moreLabel?: string;
+};
+
+export function Travel({ config, items, moreHref, moreLabel }: TravelProps) {
   const section = config.sections.travel;
-  const items = getTravelItems();
+  const visibleItems = items ?? getTravelItems();
 
   return (
     <section className="container section" id={section.id}>
-      <h2>{section.title}</h2>
+      <div className="section-head">
+        <h2>{section.title}</h2>
+        {moreHref && moreLabel ? (
+          <a className="section-more" href={moreHref}>
+            {moreLabel}
+          </a>
+        ) : null}
+      </div>
       <div className="split-layout">
-        {items.map((trip) => (
+        {visibleItems.map((trip) => (
           <MouseTilt key={trip.city} className="travel-item tilt-card">
             <a className="travel-link" href={`#/travel/${trip.slug}`}>
               <h3>{trip.city}</h3>

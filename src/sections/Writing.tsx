@@ -1,15 +1,30 @@
 import { getWritingItems } from '../lib/content';
+import type { WritingContentItem } from '../lib/content';
 import type { SiteConfig } from '../site.config';
 
-export function Writing({ config }: { config: SiteConfig }) {
+type WritingProps = {
+  config: SiteConfig;
+  items?: WritingContentItem[];
+  moreHref?: string;
+  moreLabel?: string;
+};
+
+export function Writing({ config, items, moreHref, moreLabel }: WritingProps) {
   const section = config.sections.writing;
-  const items = getWritingItems();
+  const visibleItems = items ?? getWritingItems();
 
   return (
     <section className="container section" id={section.id}>
-      <h2>{section.title}</h2>
+      <div className="section-head">
+        <h2>{section.title}</h2>
+        {moreHref && moreLabel ? (
+          <a className="section-more" href={moreHref}>
+            {moreLabel}
+          </a>
+        ) : null}
+      </div>
       <div className="article-shell">
-        {items.map((post) => (
+        {visibleItems.map((post) => (
           <article key={post.slug} className="article-item">
             <a className="article-link" href={`#/writing/${post.slug}`}>
               <span>

@@ -254,8 +254,27 @@ h1 { font-size: clamp(2.3rem, 5.4vw, 4.6rem); margin: 16px 0; max-width: 14ch; l
 .btn-solid { background: linear-gradient(115deg, #6be6ff, #7f9eff); color: #08101b; box-shadow: 0 12px 24px rgba(88, 132, 255, 0.35); }
 
 .section { padding: 28px 0; }
+.section-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 18px;
+}
+.section-head h2 { margin: 0; }
 h2 { font-size: clamp(1.5rem, 3vw, 2rem); margin: 0 0 18px; }
 h3 { margin: 0 0 8px; font-size: 1.06rem; }
+.section-more {
+  text-decoration: none;
+  font-size: 12px;
+  color: #dff4ff;
+  border: 1px solid rgba(124, 229, 255, 0.34);
+  padding: 6px 10px;
+  border-radius: 999px;
+  background: rgba(124, 229, 255, 0.08);
+  white-space: nowrap;
+}
+.section-more:hover { background: rgba(124, 229, 255, 0.16); }
 
 .card-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
 .tilt-card {
@@ -474,6 +493,42 @@ h3 { margin: 0 0 8px; font-size: 1.06rem; }
   border: 1px solid rgba(151, 180, 219, 0.28);
   border-radius: 999px;
   padding: 2px 8px;
+}
+.pagination {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 0 0 34px;
+}
+.pagination-pages {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+.pagination-link {
+  text-decoration: none;
+  font-size: 12px;
+  color: #dff4ff;
+  border: 1px solid rgba(124, 229, 255, 0.34);
+  padding: 6px 10px;
+  border-radius: 999px;
+  background: rgba(124, 229, 255, 0.08);
+}
+.pagination-link:hover { background: rgba(124, 229, 255, 0.16); }
+.pagination-current {
+  background: rgba(124, 229, 255, 0.22);
+  color: #ffffff;
+}
+.pagination-ellipsis {
+  color: #9fb7d8;
+  font-size: 12px;
+  padding: 0 2px;
+}
+.pagination-disabled {
+  opacity: 0.45;
+  pointer-events: none;
 }
 
 .photo-masonry { column-count: 3; column-gap: 14px; }
