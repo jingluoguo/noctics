@@ -1,8 +1,8 @@
 import { MouseTilt } from '../components/MouseTilt';
-import { siteConfig } from '../site.config';
+import type { SiteConfig } from '../site.config';
 
-export function Works() {
-  const section = siteConfig.sections.works;
+export function Works({ config }: { config: SiteConfig }) {
+  const section = config.sections.works;
 
   return (
     <section className="container section" id={section.id}>

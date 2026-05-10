@@ -12,6 +12,9 @@ export type WorkItem = {
 export type TravelItem = {
   city: string;
   note: string;
+  markdown?: string;
+  date?: string;
+  tags?: string[];
 };
 
 export type PhotoItem = {
@@ -20,9 +23,60 @@ export type PhotoItem = {
   h: 'tall' | 'mid' | 'short';
 };
 
-export const siteConfig = {
+export type WritingArticle = {
+  title: string;
+  markdown: string;
+  category?: string;
+  tags?: string[];
+};
+
+export type SiteConfig = {
   brand: {
-    name: 'Jingluo'
+    name: string;
+  };
+  nav: NavItem[];
+  hero: {
+    id: string;
+    eyebrow: string;
+    title: string;
+    subtitle: string;
+    primaryAction: {
+      label: string;
+      href: string;
+    };
+    showSculpture: boolean;
+  };
+  sections: {
+    works: {
+      id: string;
+      title: string;
+      items: WorkItem[];
+    };
+    writing: {
+      id: string;
+      title: string;
+      ctaLabel: string;
+      items: WritingArticle[];
+    };
+    travel: {
+      id: string;
+      title: string;
+      items: TravelItem[];
+    };
+    photography: {
+      id: string;
+      title: string;
+      items: PhotoItem[];
+    };
+  };
+  footer: {
+    rightText: string;
+  };
+};
+
+export const siteConfig: SiteConfig = {
+  brand: {
+    name: 'DonGuo'
   },
   nav: [
     { label: '文章', href: '#writing' },
@@ -55,9 +109,15 @@ export const siteConfig = {
       title: '技术文章',
       ctaLabel: '阅读',
       items: [
-        'Flutter 中复杂表单与状态管理实践',
-        '从 0 到 1 设计高质量移动端信息架构'
-      ]
+        {
+          title: 'Flutter 中复杂表单与状态管理实践',
+          markdown: `在复杂表单里，我更倾向于把**输入、校验、提交**拆成三个层次。\n\n- 输入层只负责收集状态\n- 校验层只负责规则\n- 提交层只负责副作用\n\n这样表单会更稳定，也更容易复用。`
+        },
+        {
+          title: '从 0 到 1 设计高质量移动端信息架构',
+          markdown: `好的信息架构不是“把内容都放进去”，而是让用户**一眼知道重点在哪里**。\n\n> 少即是多，但不能少到失真。\n\n我会优先保留最关键的层级，再慢慢补充细节。`
+        }
+      ] as WritingArticle[]
     },
     travel: {
       id: 'travel',
@@ -83,4 +143,4 @@ export const siteConfig = {
   footer: {
     rightText: 'Build quietly, ship beautifully.'
   }
-} as const;
+};

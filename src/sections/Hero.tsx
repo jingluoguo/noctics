@@ -1,8 +1,8 @@
 import { useEffect } from 'react';
 import { HeroParticles } from '../components/HeroParticles';
-import { siteConfig } from '../site.config';
+import type { SiteConfig } from '../site.config';
 
-export function Hero() {
+export function Hero({ config }: { config: SiteConfig }) {
   useEffect(() => {
     const root = document.documentElement;
 
@@ -17,7 +17,7 @@ export function Hero() {
     return () => window.removeEventListener('mousemove', onMove);
   }, []);
 
-  const hero = siteConfig.hero;
+  const hero = config.hero;
 
   return (
     <section className="hero container" id={hero.id}>
