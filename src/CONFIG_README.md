@@ -7,6 +7,8 @@ All page content is centralized in:
 You can update this file to change:
 
 - Brand name (`brand.name`)
+- Page title (`seo.title`)
+- Site icon (`seo.icon`)
 - Top nav (`nav`)
 - Hero texts/button/sculpture toggle (`hero`)
 - Section titles and data (`sections.*`)

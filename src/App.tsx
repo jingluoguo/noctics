@@ -125,6 +125,28 @@ function App() {
   const [hash, setHash] = useState(window.location.hash);
 
   useEffect(() => {
+    document.title = config.seo.title;
+  }, [config.seo.title]);
+
+  useEffect(() => {
+    const iconUrl = `${config.seo.icon}${config.seo.icon.includes('?') ? '&' : '?'}v=1`;
+    const iconRels = ['icon', 'shortcut icon', 'apple-touch-icon'];
+
+    for (const rel of iconRels) {
+      let iconLink = document.querySelector<HTMLLinkElement>(`link[rel="${rel}"]`);
+      if (!iconLink) {
+        iconLink = document.createElement('link');
+        iconLink.rel = rel;
+        document.head.appendChild(iconLink);
+      }
+      iconLink.href = iconUrl;
+      if (rel === 'icon' || rel === 'shortcut icon') {
+        iconLink.type = 'image/x-icon';
+      }
+    }
+  }, [config.seo.icon]);
+
+  useEffect(() => {
     const onHashChange = () => setHash(window.location.hash);
     window.addEventListener('hashchange', onHashChange);
     return () => window.removeEventListener('hashchange', onHashChange);

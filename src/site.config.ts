@@ -42,6 +42,10 @@ export type SiteConfig = {
   brand: {
     name: string;
   };
+  seo: {
+    title: string;
+    icon: string;
+  };
   nav: NavItem[];
   hero: {
     id: string;
@@ -85,6 +89,10 @@ export type SiteConfig = {
 export const siteConfig: SiteConfig = {
   brand: {
     name: 'DonGuo'
+  },
+  seo: {
+    title: 'DonGuo | Mobile Engineer',
+    icon: '/favicon.ico'
   },
   nav: [
     { label: '文章', href: '#writing' },
