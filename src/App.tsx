@@ -153,6 +153,11 @@ function App() {
     return () => window.removeEventListener('hashchange', onHashChange);
   }, []);
 
+  useEffect(() => {
+    const hasPageRoute = Boolean(parseHash(hash) || parseListHash(hash));
+    if (hasPageRoute) window.scrollTo({ top: 0, left: 0, behavior: 'auto' });
+  }, [hash]);
+
   const route = useMemo(() => parseHash(hash), [hash]);
   const listRoute = useMemo(() => parseListHash(hash), [hash]);
   const writingItems = useMemo(() => getWritingItems(), []);
