@@ -8,6 +8,7 @@ export type WritingContentItem = {
   title: string;
   markdown: string;
   summary: string;
+  cover?: string;
   category?: string;
   updatedAt?: string;
   tags: string[];
@@ -18,6 +19,7 @@ export type TravelContentItem = {
   city: string;
   markdown: string;
   summary: string;
+  cover?: string;
   date?: string;
   updatedAt?: string;
   tags: string[];
@@ -120,6 +122,7 @@ export function getWritingItems(): WritingContentItem[] {
         title,
         markdown: normalized,
         summary: pickSummary(frontMatter.summary, normalized),
+        cover: frontMatter.cover,
         category: frontMatter.category,
         updatedAt: frontMatter.updatedat,
         tags: parseTags(frontMatter.tags)
@@ -133,6 +136,7 @@ export function getWritingItems(): WritingContentItem[] {
     title: item.title,
     markdown: item.markdown,
     summary: pickSummary(item.summary, item.markdown),
+    cover: item.cover,
     category: item.category,
     updatedAt: item.updatedAt,
     tags: item.tags ?? []
@@ -151,6 +155,7 @@ export function getTravelItems(): TravelContentItem[] {
         city: frontMatter.city || title,
         markdown: normalized,
         summary: pickSummary(frontMatter.summary, normalized),
+        cover: frontMatter.cover,
         date: frontMatter.date,
         updatedAt: frontMatter.updatedat,
         tags: parseTags(frontMatter.tags)
@@ -164,6 +169,7 @@ export function getTravelItems(): TravelContentItem[] {
     city: item.city,
     markdown: item.markdown ?? item.note,
     summary: pickSummary(item.summary, item.markdown ?? item.note),
+    cover: item.cover,
     date: item.date,
     updatedAt: item.updatedAt,
     tags: item.tags ?? []

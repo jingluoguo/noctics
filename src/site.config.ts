@@ -21,6 +21,7 @@ export type TravelItem = {
   note: string;
   summary?: string;
   markdown?: string;
+  cover?: string;
   date?: string;
   updatedAt?: string;
   tags?: string[];
@@ -36,6 +37,7 @@ export type WritingArticle = {
   title: string;
   markdown: string;
   summary?: string;
+  cover?: string;
   category?: string;
   updatedAt?: string;
   tags?: string[];
@@ -79,11 +81,13 @@ export type SiteConfig = {
       id: string;
       title: string;
       ctaLabel: string;
+      coverAspectRatio?: string;
       items: WritingArticle[];
     };
     travel: {
       id: string;
       title: string;
+      coverAspectRatio?: string;
       items: TravelItem[];
     };
     photography: {
@@ -143,6 +147,7 @@ export const siteConfig: SiteConfig = {
       id: 'writing',
       title: '技术文章',
       ctaLabel: '阅读',
+      coverAspectRatio: '16 / 9',
       items: [
         {
           title: 'Flutter 中复杂表单与状态管理实践',
@@ -159,6 +164,7 @@ export const siteConfig: SiteConfig = {
     travel: {
       id: 'travel',
       title: '个人游记',
+      coverAspectRatio: '16 / 9',
       items: [
         { city: 'Kyoto', note: '在雨夜里拍下安静街道，重新理解“留白”。', updatedAt: '2026-04-08' },
         { city: 'Istanbul', note: '晨光与海风之间，记录城市的多重纹理。', updatedAt: '2026-03-17' }

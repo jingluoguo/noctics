@@ -29,18 +29,27 @@ export function Travel({ config, items, listPage, moreHref, moreLabel }: TravelP
         {visibleItems.map((trip) => (
           <MouseTilt key={trip.city} className="travel-item tilt-card">
             <a className="travel-link" href={`#/travel/${trip.slug}${listPage ? `/page/${listPage}` : ''}`}>
-              <h3>{trip.city}</h3>
-              {(trip.date || trip.tags?.length) && (
-                <div className="travel-meta">
-                  {trip.date && <span className="travel-date">{trip.date}</span>}
-                  {trip.tags?.map((tag) => (
-                    <span key={`${trip.city}-${tag}`} className="travel-tag">
-                      #{tag}
-                    </span>
-                  ))}
-                </div>
-              )}
-              <p className="travel-summary">{trip.summary}</p>
+              <div className="travel-cover-wrap" style={{ ['--cover-ar' as string]: section.coverAspectRatio ?? '16 / 9' }}>
+                {trip.cover ? (
+                  <img className="travel-cover" src={trip.cover} alt={trip.city} loading="lazy" />
+                ) : (
+                  <span className="travel-cover-fallback">{trip.city}</span>
+                )}
+              </div>
+              <div className="travel-main">
+                <h3>{trip.city}</h3>
+                {(trip.date || trip.tags?.length) && (
+                  <div className="travel-meta">
+                    {trip.date && <span className="travel-date">{trip.date}</span>}
+                    {trip.tags?.map((tag) => (
+                      <span key={`${trip.city}-${tag}`} className="travel-tag">
+                        #{tag}
+                      </span>
+                    ))}
+                  </div>
+                )}
+                <p className="travel-summary">{trip.summary}</p>
+              </div>
             </a>
           </MouseTilt>
         ))}

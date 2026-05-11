@@ -61,7 +61,7 @@ Each file can use:
 
 - First line `# 标题` (recommended)
 - Then article markdown body
-- Optional front matter for `category` / `tags` / `summary`
+- Optional front matter for `category` / `tags` / `summary` / `cover`
 
 The writing section auto-discovers and renders these files.
 When markdown files exist, they take priority over `site.config.ts` writing items.
@@ -75,6 +75,7 @@ Example:
 category: Flutter
 tags: form, state-management, ux
 summary: 这一篇文章的列表摘要文案
+cover: /covers/flutter-form.jpg
 ---
 # 文章标题
 
@@ -90,9 +91,20 @@ If no local markdown files are present, `sections.writing.items` in `site.config
   title: string;
   markdown: string;
   summary?: string;
+  cover?: string;
   category?: string;
   tags?: string[];
 }[]
+```
+
+You can also set writing list cover ratio:
+
+```ts
+sections: {
+  writing: {
+    coverAspectRatio: '16 / 9'
+  }
+}
 ```
 
 Supported markdown includes:
@@ -118,6 +130,7 @@ city: Kyoto
 date: 2026-04-08
 tags: japan, street, rain-night
 summary: 这一篇游记的列表摘要文案
+cover: /covers/kyoto-rain-night.jpg
 ---
 # 京都雨夜
 
@@ -129,6 +142,8 @@ Rules:
 - `city` is used as card title (fallback to markdown `#` heading)
 - `date` and `tags` render as metadata badges
 - `summary` is used as list summary (fallback to auto-generated summary from body)
+- `cover` is used as list cover image (fallback to title placeholder when missing)
+- `sections.travel.coverAspectRatio` controls travel list cover ratio (default `16 / 9`)
 - List shows a one-line summary (ellipsis when overflow)
 - Each item has a detail page
 - Homepage shows latest 5 travel notes

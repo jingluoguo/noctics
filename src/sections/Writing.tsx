@@ -28,7 +28,14 @@ export function Writing({ config, items, listPage, moreHref, moreLabel }: Writin
         {visibleItems.map((post) => (
           <article key={post.slug} className="article-item">
             <a className="article-link" href={`#/writing/${post.slug}${listPage ? `/page/${listPage}` : ''}`}>
-              <span>
+              <span className="article-cover-wrap" style={{ ['--cover-ar' as string]: section.coverAspectRatio ?? '16 / 9' }}>
+                {post.cover ? (
+                  <img className="article-cover" src={post.cover} alt={post.title} loading="lazy" />
+                ) : (
+                  <span className="article-cover-fallback">{post.title}</span>
+                )}
+              </span>
+              <span className="article-main">
                 <strong>{post.title}</strong>
                 {(post.updatedAt || post.category || post.tags?.length) && (
                   <span className="article-meta">
@@ -43,7 +50,7 @@ export function Writing({ config, items, listPage, moreHref, moreLabel }: Writin
                 )}
                 <span className="article-summary">{post.summary}</span>
               </span>
-              <span>{section.ctaLabel}</span>
+              <span className="article-cta">{section.ctaLabel}</span>
             </a>
           </article>
         ))}
