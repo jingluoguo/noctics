@@ -1,11 +1,8 @@
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { HeroParticles } from '../components/HeroParticles';
 import type { SiteConfig } from '../site.config';
 
 export function Hero({ config }: { config: SiteConfig }) {
-  const [displayTitle, setDisplayTitle] = useState('');
-  const [titleTypingDone, setTitleTypingDone] = useState(false);
-
   useEffect(() => {
     const root = document.documentElement;
 
@@ -21,52 +18,37 @@ export function Hero({ config }: { config: SiteConfig }) {
   }, []);
 
   const hero = config.hero;
-  const title = hero.title;
-
-  useEffect(() => {
-    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    const characters = Array.from(title);
-
-    if (prefersReducedMotion) {
-      setDisplayTitle(title);
-      setTitleTypingDone(true);
-      return;
-    }
-
-    setDisplayTitle('');
-    setTitleTypingDone(false);
-
-    let index = 0;
-    let timerId = window.setTimeout(function type() {
-      index += 1;
-      setDisplayTitle(characters.slice(0, index).join(''));
-
-      if (index < characters.length) {
-        const char = characters[index - 1];
-        const delay = /[，。！？、,.!?]/.test(char) ? 150 : 42;
-        timerId = window.setTimeout(type, delay);
-      } else {
-        setTitleTypingDone(true);
-      }
-    }, 500);
-
-    return () => window.clearTimeout(timerId);
-  }, [title]);
+  const profile = hero.profile;
 
   return (
     <section className="hero container" id={hero.id}>
       <HeroParticles />
       <div className="hero-grid">
         <div className="hero-copy-block">
-          <p className="eyebrow">{hero.eyebrow}</p>
-          <h1 className="hero-title" aria-label={title}>
-            <span className="hero-title-text">{displayTitle || '\u00A0'}</span>
-            <span className={`hero-title-cursor ${titleTypingDone ? 'is-idle' : ''}`} aria-hidden="true" />
-          </h1>
-          <p className="hero-copy">{hero.subtitle}</p>
-          <div className="hero-actions">
-            <a href={hero.primaryAction.href} className="btn btn-solid">{hero.primaryAction.label}</a>
-          </div>
+          {profile && (
+            <div className="hero-profile">
+              <img className="hero-profile-avatar" src={profile.avatar} alt={profile.nickname} />
+              <div className="hero-profile-content">
+                <strong className="hero-profile-name">{profile.nickname}</strong>
+                {profile.headline && <p className="hero-profile-headline">{profile.headline}</p>}
+                {profile.intro && <p className="hero-profile-intro">{profile.intro}</p>}
+                <div className="hero-profile-socials">
+                  {profile.socials.map((social) => (
+                    <a
+                      key={`${social.label}-${social.url}`}
+                      href={social.url}
+                      target="_blank"
+                      rel="noreferrer"
+                      aria-label={social.label}
+                      title={social.label}
+                    >
+                      <span className="hero-social-icon" aria-hidden="true">{social.icon}</span>
+                    </a>
+                  ))}
+                </div>
+              </div>
+            </div>
+          )}
         </div>
         {hero.showSculpture && (
           <div className="hero-sculpture" aria-hidden="true">

@@ -11,6 +11,7 @@ You can update this file to change:
 - Site icon (`seo.icon`)
 - Top nav (`nav`)
 - Hero texts/button/sculpture toggle (`hero`)
+- Hero profile card (`hero.profile`) including avatar / nickname / socials
 - Section titles and data (`sections.*`)
 - Footer right text (`footer.rightText`)
 
@@ -147,6 +148,34 @@ Rules:
 List pages support pagination:
 
 - Page size is fixed at 12
+
+## Hero profile config (optional)
+
+You can render avatar, nickname and social links on homepage hero by adding:
+
+```ts
+hero: {
+  // ...other hero fields
+  profile: {
+    avatar: '/avatar.jpg',
+    nickname: 'DonGuo',
+    headline: 'MOBILE ENGINEER · WRITER',
+    intro: '移动端工程师，关注体验与叙事。',
+    socials: [
+      { label: 'GitHub', icon: '🐙', url: 'https://github.com/yourname' },
+      { label: 'X', icon: '𝕏', url: 'https://x.com/yourname' }
+    ]
+  }
+}
+```
+
+Rules:
+
+- `profile` is optional; when omitted, the profile card is hidden
+- `avatar` should be an accessible static path or full URL
+- `headline` is optional and appears under nickname
+- `socials` supports any platform, rendered in order
+- each social item requires `icon`, `label`, and `url`
 
 ## CMS mode (optional)
 

@@ -52,9 +52,17 @@ export type SiteConfig = {
   nav: NavItem[];
   hero: {
     id: string;
-    eyebrow: string;
-    title: string;
-    subtitle: string;
+    profile?: {
+      avatar: string;
+      nickname: string;
+      headline?: string;
+      intro?: string;
+      socials: {
+        label: string;
+        icon: string;
+        url: string;
+      }[];
+    };
     primaryAction: {
       label: string;
       href: string;
@@ -105,9 +113,17 @@ export const siteConfig: SiteConfig = {
   ] as NavItem[],
   hero: {
     id: 'top',
-    eyebrow: 'MOBILE ENGINEER · WRITER · VISUAL STORYTELLER',
-    title: '把复杂留给自己，把体验留给用户。',
-    subtitle: '技术文章、作品、游记与摄影的精选归档。',
+    profile: {
+      avatar: '/favicon.ico',
+      nickname: 'DonGuo',
+      headline: 'Mobile Engineer · Writer · Visual Storyteller',
+      intro: '移动端工程师，关注体验与叙事。',
+      socials: [
+        { label: 'GitHub', icon: '🐙', url: 'https://github.com/' },
+        { label: 'X', icon: '𝕏', url: 'https://x.com/' },
+        { label: '掘金', icon: '掘', url: 'https://juejin.cn/' }
+      ]
+    },
     primaryAction: {
       label: '查看作品',
       href: '#works'
