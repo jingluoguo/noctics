@@ -13,10 +13,10 @@ import { getTravelItems, getWorkItems, getWritingItems } from './lib/content';
 import { DetailPage } from './sections/DetailPage';
 
 function parseHash(hash: string) {
-  const match = hash.match(/^#\/(writing|travel)\/([^/]+?)(?:\/page\/(\d+))?$/);
+  const match = hash.match(/^#\/(writing|travel|works)\/([^/]+?)(?:\/page\/(\d+))?$/);
   if (!match) return null;
   const page = match[3] ? Math.max(1, Number(match[3])) : undefined;
-  return { type: match[1] as 'writing' | 'travel', slug: decodeURIComponent(match[2]), page };
+  return { type: match[1] as 'writing' | 'travel' | 'works', slug: decodeURIComponent(match[2]), page };
 }
 
 function parseSectionHash(hash: string) {
@@ -163,7 +163,7 @@ function App() {
   if (route?.type === 'writing') {
     const item = writingItems.find((entry) => entry.slug === route.slug);
     if (item) {
-      const meta = [item.category, ...item.tags.map((tag) => `#${tag}`)].filter(Boolean) as string[];
+      const meta = [item.updatedAt ? `更新于 ${item.updatedAt}` : '', item.category, ...item.tags.map((tag) => `#${tag}`)].filter(Boolean) as string[];
       const backHref = route.page ? buildListPageHref('writing', route.page) : '#writing';
       detailContent = (
         <DetailPage
@@ -190,6 +190,24 @@ function App() {
       );
     }
   }
+  if (route?.type === 'works') {
+    const item = workItems.find((entry) => entry.name === route.slug);
+    if (item) {
+      const meta = [item.updatedAt ? `更新于 ${item.updatedAt}` : '', item.stack].filter(Boolean) as string[];
+      const markdown = [
+        item.desc,
+        '',
+        item.website ? `[项目主页](${item.website})` : '',
+        item.platforms?.length
+          ? item.platforms.map((platform) => `- [${platform.name}](${platform.url})`).join('\n')
+          : ''
+      ]
+        .filter(Boolean)
+        .join('\n');
+      const backHref = route.page ? buildListPageHref('works', route.page) : '#works';
+      detailContent = <DetailPage title={item.name} markdown={markdown} backHref={backHref} meta={meta} />;
+    }
+  }
 
   let listContent: ReactNode = null;
   if (listRoute?.type === 'works') {
@@ -200,7 +218,7 @@ function App() {
       <>
         <section className="container section detail-page">
           <a className="detail-back" href="#works">返回</a>
-          <Works config={config} items={pagedItems} />
+          <Works config={config} items={pagedItems} listPage={page} />
         </section>
         <Pagination type="works" page={page} total={workItems.length} pageSize={pageSize} />
       </>

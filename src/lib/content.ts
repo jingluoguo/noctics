@@ -9,6 +9,7 @@ export type WritingContentItem = {
   markdown: string;
   summary: string;
   category?: string;
+  updatedAt?: string;
   tags: string[];
 };
 
@@ -18,6 +19,7 @@ export type TravelContentItem = {
   markdown: string;
   summary: string;
   date?: string;
+  updatedAt?: string;
   tags: string[];
 };
 
@@ -119,6 +121,7 @@ export function getWritingItems(): WritingContentItem[] {
         markdown: normalized,
         summary: pickSummary(frontMatter.summary, normalized),
         category: frontMatter.category,
+        updatedAt: frontMatter.updatedat,
         tags: parseTags(frontMatter.tags)
       };
     });
@@ -131,6 +134,7 @@ export function getWritingItems(): WritingContentItem[] {
     markdown: item.markdown,
     summary: pickSummary(item.summary, item.markdown),
     category: item.category,
+    updatedAt: item.updatedAt,
     tags: item.tags ?? []
   }));
 }
@@ -148,6 +152,7 @@ export function getTravelItems(): TravelContentItem[] {
         markdown: normalized,
         summary: pickSummary(frontMatter.summary, normalized),
         date: frontMatter.date,
+        updatedAt: frontMatter.updatedat,
         tags: parseTags(frontMatter.tags)
       };
     });
@@ -160,6 +165,7 @@ export function getTravelItems(): TravelContentItem[] {
     markdown: item.markdown ?? item.note,
     summary: pickSummary(item.summary, item.markdown ?? item.note),
     date: item.date,
+    updatedAt: item.updatedAt,
     tags: item.tags ?? []
   }));
 }

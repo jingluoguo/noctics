@@ -1,6 +1,7 @@
 ---
 city: Kyoto
 date: 2026-04-08
+updatedAt: 2026-04-22
 tags: japan, street, rain-night
 summary: 一场京都雨夜的街头记录，在慢节奏光影里体会留白。
 ---

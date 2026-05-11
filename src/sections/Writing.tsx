@@ -30,8 +30,9 @@ export function Writing({ config, items, listPage, moreHref, moreLabel }: Writin
             <a className="article-link" href={`#/writing/${post.slug}${listPage ? `/page/${listPage}` : ''}`}>
               <span>
                 <strong>{post.title}</strong>
-                {(post.category || post.tags?.length) && (
+                {(post.updatedAt || post.category || post.tags?.length) && (
                   <span className="article-meta">
+                    {post.updatedAt && <span className="item-updated-at">更新于 {post.updatedAt}</span>}
                     {post.category && <span className="article-category">{post.category}</span>}
                     {post.tags?.map((tag) => (
                       <span key={`${post.title}-${tag}`} className="article-tag">

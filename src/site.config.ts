@@ -7,6 +7,7 @@ export type WorkItem = {
   name: string;
   desc: string;
   stack: string;
+  updatedAt?: string;
   website?: string;
   logo?: string;
   platforms?: {
@@ -21,6 +22,7 @@ export type TravelItem = {
   summary?: string;
   markdown?: string;
   date?: string;
+  updatedAt?: string;
   tags?: string[];
 };
 
@@ -35,6 +37,7 @@ export type WritingArticle = {
   markdown: string;
   summary?: string;
   category?: string;
+  updatedAt?: string;
   tags?: string[];
 };
 
@@ -127,10 +130,12 @@ export const siteConfig: SiteConfig = {
       items: [
         {
           title: 'Flutter 中复杂表单与状态管理实践',
+          updatedAt: '2026-04-20',
           markdown: `在复杂表单里，我更倾向于把**输入、校验、提交**拆成三个层次。\n\n- 输入层只负责收集状态\n- 校验层只负责规则\n- 提交层只负责副作用\n\n这样表单会更稳定，也更容易复用。`
         },
         {
           title: '从 0 到 1 设计高质量移动端信息架构',
+          updatedAt: '2026-04-12',
           markdown: `好的信息架构不是“把内容都放进去”，而是让用户**一眼知道重点在哪里**。\n\n> 少即是多，但不能少到失真。\n\n我会优先保留最关键的层级，再慢慢补充细节。`
         }
       ] as WritingArticle[]
@@ -139,8 +144,8 @@ export const siteConfig: SiteConfig = {
       id: 'travel',
       title: '个人游记',
       items: [
-        { city: 'Kyoto', note: '在雨夜里拍下安静街道，重新理解“留白”。' },
-        { city: 'Istanbul', note: '晨光与海风之间，记录城市的多重纹理。' }
+        { city: 'Kyoto', note: '在雨夜里拍下安静街道，重新理解“留白”。', updatedAt: '2026-04-08' },
+        { city: 'Istanbul', note: '晨光与海风之间，记录城市的多重纹理。', updatedAt: '2026-03-17' }
       ] as TravelItem[]
     },
     photography: {

@@ -6,11 +6,12 @@ import type { WorkItem } from '../site.config';
 type WorksProps = {
   config: SiteConfig;
   items?: WorkItem[];
+  listPage?: number;
   moreHref?: string;
   moreLabel?: string;
 };
 
-export function Works({ config, items, moreHref, moreLabel }: WorksProps) {
+export function Works({ config, items, listPage, moreHref, moreLabel }: WorksProps) {
   const section = config.sections.works;
   const visibleItems = items ?? getWorkItems();
 
@@ -54,6 +55,13 @@ export function Works({ config, items, moreHref, moreLabel }: WorksProps) {
               </div>
               <p>{app.desc}</p>
               <span>{app.stack}</span>
+              <a
+                className="work-detail-link"
+                href={`#/works/${encodeURIComponent(app.name)}${listPage ? `/page/${listPage}` : ''}`}
+                onClick={(event) => event.stopPropagation()}
+              >
+                查看详情
+              </a>
               {app.platforms?.length ? (
                 <div className="work-platforms">
                   {app.platforms.map((platform) => (

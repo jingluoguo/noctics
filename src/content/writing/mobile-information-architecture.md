@@ -1,5 +1,6 @@
 ---
 category: Product
+updatedAt: 2026-04-12
 tags: information-architecture, mobile, design
 ---
 # 从 0 到 1 设计高质量移动端信息架构

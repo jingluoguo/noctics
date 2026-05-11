@@ -4,6 +4,7 @@ const app: WorkItem = {
   name: 'Orbit Focus',
   desc: '轻量习惯追踪与复盘工具，关注反馈速度与动效细节。',
   stack: 'Flutter · Dart · Riverpod',
+  updatedAt: '2026-04-12',
   logo: '/app-logos/orbit-focus.svg',
   website: 'https://example.com/orbit-focus',
   platforms: [
