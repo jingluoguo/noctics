@@ -14,6 +14,59 @@ type MarkdownProps = {
   content: string;
 };
 
+export type TocHeading = {
+  id: string;
+  text: string;
+  level: number;
+};
+
+function slugifyHeading(input: string): string {
+  return input
+    .trim()
+    .toLowerCase()
+    .replace(/[*_`~[\]()]/g, '')
+    .replace(/[^\p{L}\p{N}\s-]/gu, '')
+    .replace(/\s+/g, '-')
+    .replace(/-+/g, '-')
+    .replace(/^-|-$/g, '');
+}
+
+function createHeadingId(rawHeading: string, used: Map<string, number>): string {
+  const base = slugifyHeading(rawHeading) || 'section';
+  const count = used.get(base) ?? 0;
+  used.set(base, count + 1);
+  return count === 0 ? base : `${base}-${count + 1}`;
+}
+
+export function extractTocHeadings(content: string): TocHeading[] {
+  const lines = content.replace(/\r\n/g, '\n').split('\n');
+  const headings: TocHeading[] = [];
+  const used = new Map<string, number>();
+  let inCode = false;
+
+  for (const rawLine of lines) {
+    const line = rawLine.trimEnd();
+    if (line.startsWith('```')) {
+      inCode = !inCode;
+      continue;
+    }
+    if (inCode) continue;
+
+    const headingMatch = line.match(/^(#{1,3})\s+(.*)$/);
+    if (!headingMatch) continue;
+
+    const level = headingMatch[1].length;
+    const text = headingMatch[2].trim();
+    headings.push({
+      id: createHeadingId(text, used),
+      text,
+      level
+    });
+  }
+
+  return headings;
+}
+
 hljs.registerLanguage('javascript', javascript);
 hljs.registerLanguage('js', javascript);
 hljs.registerLanguage('typescript', typescript);
@@ -83,6 +136,7 @@ function parseInline(text: string): string {
 function renderMarkdown(content: string) {
   const lines = content.replace(/\r\n/g, '\n').split('\n');
   const nodes: string[] = [];
+  const usedHeadingIds = new Map<string, number>();
   let paragraph: string[] = [];
   let listItems: string[] = [];
   let listType: 'ul' | 'ol' | null = null;
@@ -152,7 +206,9 @@ function renderMarkdown(content: string) {
       flushParagraph();
       flushList();
       const level = headingMatch[1].length;
-      nodes.push(`<h${level}>${parseInline(headingMatch[2])}</h${level}>`);
+      const headingText = headingMatch[2].trim();
+      const headingId = createHeadingId(headingText, usedHeadingIds);
+      nodes.push(`<h${level} id="${escapeAttribute(headingId)}">${parseInline(headingText)}</h${level}>`);
       continue;
     }
 

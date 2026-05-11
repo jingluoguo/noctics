@@ -182,16 +182,26 @@ function App() {
     }
   }
   if (route?.type === 'travel') {
-    const item = travelItems.find((entry) => entry.slug === route.slug);
-    if (item) {
+    const currentIndex = travelItems.findIndex((entry) => entry.slug === route.slug);
+    const item = currentIndex >= 0 ? travelItems[currentIndex] : undefined;
+    if (item && currentIndex >= 0) {
       const meta = [item.date, ...item.tags.map((tag) => `#${tag}`)].filter(Boolean) as string[];
       const backHref = route.page ? buildListPageHref('travel', route.page) : '#travel';
+      const prevEntry = travelItems[currentIndex - 1];
+      const nextEntry = travelItems[currentIndex + 1];
+      const buildTravelDetailHref = (slug: string) => `#/travel/${slug}${route.page ? `/page/${route.page}` : ''}`;
       detailContent = (
         <DetailPage
           title={item.city}
           markdown={item.markdown}
           backHref={backHref}
           meta={meta}
+          prevItem={prevEntry ? { title: prevEntry.city, href: buildTravelDetailHref(prevEntry.slug) } : null}
+          nextItem={nextEntry ? { title: nextEntry.city, href: buildTravelDetailHref(nextEntry.slug) } : null}
+          prevLabel="上一章"
+          nextLabel="下一章"
+          prevEndText="已到第一章"
+          nextEndText="已到最后一章"
         />
       );
     }
