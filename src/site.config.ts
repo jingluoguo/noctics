@@ -29,6 +29,7 @@ export type TravelItem = {
 
 export type PhotoItem = {
   title: string;
+  image?: string;
   tone: 'cool' | 'warm' | 'violet' | 'blue' | 'teal' | 'ice';
   h: 'tall' | 'mid' | 'short';
 };

@@ -1390,7 +1390,20 @@ h3 {
   transition: transform 280ms ease;
 }
 
+.photo-image {
+  width: 100%;
+  border-radius: var(--radius-sm);
+  border: 1px solid rgba(163, 195, 238, 0.24);
+  object-fit: cover;
+  display: block;
+  transition: transform 280ms ease;
+}
+
 .photo-block:hover .photo-placeholder {
+  transform: scale(1.04);
+}
+
+.photo-block:hover .photo-image {
   transform: scale(1.04);
 }
 

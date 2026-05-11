@@ -1,5 +1,5 @@
 import { siteConfig } from '../site.config';
-import type { WorkItem } from '../site.config';
+import type { PhotoItem, WorkItem } from '../site.config';
 
 type MarkdownModuleMap = Record<string, string>;
 
@@ -42,6 +42,12 @@ const workAppModules = import.meta.glob('/src/content/apps/*.ts', {
   eager: true,
   import: 'default'
 }) as WorkAppModuleMap;
+
+type PhotographyModuleMap = Record<string, PhotoItem[]>;
+const photographyModules = import.meta.glob('/src/content/photography.ts', {
+  eager: true,
+  import: 'default'
+}) as PhotographyModuleMap;
 
 function getFileName(filePath: string) {
   return filePath.split('/').pop()?.replace(/\.md$/i, '') ?? 'untitled';
@@ -184,4 +190,10 @@ export function getWorkItems(): WorkItem[] {
 
   if (localItems.length) return localItems;
   return siteConfig.sections.works.items;
+}
+
+export function getPhotographyItems(): PhotoItem[] {
+  const items = Object.values(photographyModules)[0];
+  if (Array.isArray(items) && items.length) return items;
+  return siteConfig.sections.photography.items;
 }

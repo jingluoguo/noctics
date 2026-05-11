@@ -17,6 +17,32 @@ You can update this file to change:
 
 No component edits are required for normal content updates.
 
+### Photography config (single file recommended)
+
+Put photography items into:
+
+- `src/content/photography.ts`
+
+Example:
+
+```ts
+import type { PhotoItem } from '../site.config';
+
+const photographyItems: PhotoItem[] = [
+  { title: 'Dawn Geometry', image: '/photos/dawn-geometry.jpg', tone: 'cool', h: 'tall' },
+  { title: 'Fog & Steel', image: '/photos/fog-steel.jpg', tone: 'warm', h: 'mid' }
+];
+
+export default photographyItems;
+```
+
+Rules:
+
+- If `src/content/photography.ts` exists and has items, homepage uses it first
+- If missing or empty, fallback to `site.config.ts` `sections.photography.items`
+- `image` is optional; when provided, it renders real photo (put files under `public/photos` and use `/photos/xxx.jpg`)
+- When `image` is missing, it falls back to color placeholder by `tone`
+
 ### Works section app config (recommended)
 
 Put one config file per app into:
