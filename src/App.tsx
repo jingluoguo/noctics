@@ -161,16 +161,22 @@ function App() {
 
   let detailContent: ReactNode = null;
   if (route?.type === 'writing') {
-    const item = writingItems.find((entry) => entry.slug === route.slug);
-    if (item) {
+    const currentIndex = writingItems.findIndex((entry) => entry.slug === route.slug);
+    const item = currentIndex >= 0 ? writingItems[currentIndex] : undefined;
+    if (item && currentIndex >= 0) {
       const meta = [item.updatedAt ? `更新于 ${item.updatedAt}` : '', item.category, ...item.tags.map((tag) => `#${tag}`)].filter(Boolean) as string[];
       const backHref = route.page ? buildListPageHref('writing', route.page) : '#writing';
+      const prevEntry = writingItems[currentIndex - 1];
+      const nextEntry = writingItems[currentIndex + 1];
+      const buildWritingDetailHref = (slug: string) => `#/writing/${slug}${route.page ? `/page/${route.page}` : ''}`;
       detailContent = (
         <DetailPage
           title={item.title}
           markdown={item.markdown}
           backHref={backHref}
           meta={meta}
+          prevItem={prevEntry ? { title: prevEntry.title, href: buildWritingDetailHref(prevEntry.slug) } : null}
+          nextItem={nextEntry ? { title: nextEntry.title, href: buildWritingDetailHref(nextEntry.slug) } : null}
         />
       );
     }
