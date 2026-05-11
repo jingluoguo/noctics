@@ -838,8 +838,8 @@ h3 {
   padding: 14px 16px;
   overflow: auto;
   border-radius: var(--radius-sm);
-  background: #0d1117;
-  border: 1px solid #30363d;
+  background: #1e1e1e;
+  border: 1px solid #2a2a2a;
 }
 
 .markdown-code-block {
@@ -856,34 +856,34 @@ h3 {
   gap: 8px;
   padding: 9px 12px;
   border-radius: var(--radius-sm) var(--radius-sm) 0 0;
-  border: 1px solid #30363d;
+  border: 1px solid #2a2a2a;
   border-bottom: 0;
-  background: #161b22;
+  background: #252526;
 }
 
 .markdown-code-lang {
   font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', monospace;
   font-size: 11px;
-  color: #8b949e;
+  color: #9da3ad;
   text-transform: lowercase;
   letter-spacing: 0.06em;
 }
 
 .markdown-code-copy {
-  border: 1px solid #30363d;
+  border: 1px solid #3a3d41;
   border-radius: 6px;
   padding: 3px 10px;
-  color: #c9d1d9;
-  background: #21262d;
+  color: #d4d4d4;
+  background: #2d2d30;
   font-size: 12px;
   cursor: pointer;
   transition: background 160ms ease, border-color 160ms ease, color 160ms ease;
 }
 
 .markdown-code-copy:hover {
-  background: #30363d;
-  border-color: #8b949e;
-  color: #f0f6fc;
+  background: #3a3d41;
+  border-color: #5a5f67;
+  color: #ffffff;
 }
 
 .markdown-code-block pre {
@@ -898,39 +898,39 @@ h3 {
 .markdown code {
   font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', monospace;
   font-size: 0.92em;
-  color: #e1f7ff;
+  color: #d4d4d4;
 }
 
 .markdown pre code {
-  color: #c9d1d9;
+  color: #d4d4d4;
 }
 
 .markdown pre code .hljs-comment,
 .markdown pre code .hljs-quote {
-  color: #8b949e;
+  color: #6a9955;
   font-style: italic;
 }
 
 .markdown pre code .hljs-keyword,
 .markdown pre code .hljs-selector-tag,
 .markdown pre code .hljs-subst {
-  color: #ff7b72;
+  color: #569cd6;
 }
 
 .markdown pre code .hljs-string,
 .markdown pre code .hljs-doctag {
-  color: #a5d6ff;
+  color: #ce9178;
 }
 
 .markdown pre code .hljs-number,
 .markdown pre code .hljs-literal {
-  color: #79c0ff;
+  color: #b5cea8;
 }
 
 .markdown pre code .hljs-title,
 .markdown pre code .hljs-section,
 .markdown pre code .hljs-function .hljs-title {
-  color: #d2a8ff;
+  color: #dcdcaa;
 }
 
 .markdown pre code .hljs-attr,
@@ -939,7 +939,7 @@ h3 {
 .markdown pre code .hljs-variable,
 .markdown pre code .hljs-template-variable,
 .markdown pre code .hljs-type {
-  color: #9ecbff;
+  color: #9cdcfe;
 }
 
 .markdown pre code .hljs-built_in,
@@ -947,11 +947,11 @@ h3 {
 .markdown pre code .hljs-symbol,
 .markdown pre code .hljs-bullet,
 .markdown pre code .hljs-link {
-  color: #ffa657;
+  color: #4ec9b0;
 }
 
 .markdown pre code .hljs-meta {
-  color: #7ee787;
+  color: #c586c0;
 }
 
 .markdown pre::-webkit-scrollbar {
@@ -959,12 +959,12 @@ h3 {
 }
 
 .markdown pre::-webkit-scrollbar-thumb {
-  background: #30363d;
+  background: #3a3d41;
   border-radius: 999px;
 }
 
 .markdown pre::-webkit-scrollbar-track {
-  background: #0d1117;
+  background: #1e1e1e;
 }
 
 .markdown p code,
