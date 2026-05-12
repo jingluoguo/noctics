@@ -44,6 +44,13 @@ export type WritingArticle = {
   tags?: string[];
 };
 
+export type FriendLinkItem = {
+  name: string;
+  url: string;
+  desc?: string;
+  avatar?: string;
+};
+
 export type SiteConfig = {
   brand: {
     name: string;
@@ -95,6 +102,11 @@ export type SiteConfig = {
       id: string;
       title: string;
       items: PhotoItem[];
+    };
+    links: {
+      id: string;
+      title: string;
+      items: FriendLinkItem[];
     };
   };
   footer: {
@@ -161,6 +173,24 @@ export const siteConfig: SiteConfig = {
       id: 'photo',
       title: '摄影作品',
       items: [] as PhotoItem[]
+    },
+    links: {
+      id: 'links',
+      title: '友情链接',
+      items: [
+        {
+          name: 'OpenAI',
+          url: 'https://openai.com/',
+          desc: 'AI 技术与产品前沿',
+          avatar: 'https://openai.com/favicon.ico'
+        },
+        {
+          name: 'Vite',
+          url: 'https://vite.dev/',
+          desc: '现代前端构建工具',
+          avatar: 'https://vite.dev/logo.svg'
+        }
+      ] as FriendLinkItem[]
     }
   },
   footer: {

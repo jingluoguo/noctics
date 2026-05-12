@@ -7,6 +7,7 @@ import { Works } from './sections/Works';
 import { Writing } from './sections/Writing';
 import { Travel } from './sections/Travel';
 import { Photography } from './sections/Photography';
+import { FriendLinks } from './sections/FriendLinks';
 import { Footer } from './components/Footer';
 import { useSiteConfig } from './hooks/useSiteConfig';
 import { getTravelItems, getWorkItems, getWritingItems } from './lib/content';
@@ -392,6 +393,7 @@ function App() {
               moreLabel="浏览全部游记"
             />
             <Photography config={config} />
+            <FriendLinks config={config} />
           </>
         )}
       </main>

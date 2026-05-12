@@ -1150,6 +1150,64 @@ h3 {
   color: #ddf7ff;
 }
 
+.friend-links-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.friend-link-card {
+  display: grid;
+  gap: 8px;
+  text-decoration: none;
+  color: inherit;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-md);
+  padding: 16px;
+  background: linear-gradient(135deg, rgba(14, 24, 37, 0.84), rgba(10, 16, 28, 0.84));
+  transition: border-color 180ms ease, background 180ms ease, transform 180ms ease;
+}
+
+.friend-link-card:hover {
+  border-color: rgba(124, 229, 255, 0.42);
+  background: linear-gradient(135deg, rgba(18, 30, 46, 0.9), rgba(12, 20, 33, 0.9));
+  transform: translateY(-2px);
+}
+
+.friend-link-card strong {
+  font-size: 15px;
+  font-weight: 600;
+}
+
+.friend-link-head {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 24px;
+}
+
+.friend-link-avatar {
+  width: 24px;
+  height: 24px;
+  border-radius: 6px;
+  object-fit: cover;
+  border: 1px solid rgba(151, 180, 219, 0.28);
+  background: rgba(151, 180, 219, 0.08);
+  flex-shrink: 0;
+}
+
+.friend-link-card span {
+  font-size: 13px;
+  color: var(--muted);
+}
+
+.friend-link-card em {
+  font-style: normal;
+  font-size: 12px;
+  color: #9eb8d6;
+  word-break: break-all;
+}
+
 .detail-page {
   min-height: calc(100svh - 220px);
 }
@@ -1623,6 +1681,10 @@ figcaption {
 
   .card-grid,
   .split-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .friend-links-grid {
     grid-template-columns: 1fr;
   }
 
