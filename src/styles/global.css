@@ -514,6 +514,36 @@ h3 {
   background: rgba(124, 229, 255, 0.16);
 }
 
+.tag-filter {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 0 0 12px;
+}
+
+.tag-filter-chip {
+  text-decoration: none;
+  font-size: 12px;
+  color: #bcd6f4;
+  border: 1px solid rgba(151, 180, 219, 0.28);
+  border-radius: 999px;
+  padding: 4px 10px;
+  background: rgba(151, 180, 219, 0.06);
+  transition: background 180ms ease, border-color 180ms ease, color 180ms ease;
+}
+
+.tag-filter-chip:hover {
+  color: #d7f6ff;
+  border-color: rgba(124, 229, 255, 0.42);
+  background: rgba(124, 229, 255, 0.12);
+}
+
+.tag-filter-chip.is-active {
+  color: #dff4ff;
+  border-color: rgba(124, 229, 255, 0.52);
+  background: rgba(124, 229, 255, 0.2);
+}
+
 .card-grid {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -806,6 +836,12 @@ h3 {
 
 .article-body {
   padding: 18px 20px 22px;
+}
+
+.filter-empty {
+  padding: 20px;
+  color: var(--muted);
+  font-size: 13px;
 }
 
 .article-summary,
