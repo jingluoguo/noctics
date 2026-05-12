@@ -103,6 +103,10 @@ function buildSearchHref(keyword?: string) {
   return withQuery('#/search', { keyword });
 }
 
+function getSiteUrl() {
+  return (import.meta.env.VITE_SITE_URL || window.location.origin || 'https://example.com').replace(/\/+$/, '');
+}
+
 function filterByTag<T extends { tags: string[] }>(items: T[], tag: string | null) {
   if (!tag) return items;
   return items.filter((item) => item.tags.includes(tag));
@@ -282,6 +286,7 @@ function App() {
   const writingItems = useMemo(() => getWritingItems(), []);
   const travelItems = useMemo(() => getTravelItems(), []);
   const workItems = useMemo(() => getWorkItems(), []);
+  const siteUrl = useMemo(() => getSiteUrl(), []);
   const writingTags = useMemo(() => collectTags(writingItems), [writingItems]);
   const travelTags = useMemo(() => collectTags(travelItems), [travelItems]);
   const currentSectionType = route?.type ?? listRoute?.type ?? (sectionHash === 'writing' || sectionHash === 'travel' || sectionHash === 'works' ? sectionHash : null);
@@ -370,6 +375,24 @@ function App() {
           meta={meta}
           prevItem={prevEntry ? { title: prevEntry.title, href: buildWritingDetailHref(prevEntry.slug) } : null}
           nextItem={nextEntry ? { title: nextEntry.title, href: buildWritingDetailHref(nextEntry.slug) } : null}
+          structuredData={{
+            '@context': 'https://schema.org',
+            '@type': 'BlogPosting',
+            headline: item.title,
+            dateModified: item.updatedAt,
+            keywords: item.tags.join(','),
+            description: item.summary,
+            image: item.cover ? `${siteUrl}${item.cover}` : undefined,
+            author: {
+              '@type': 'Person',
+              name: config.brand.name
+            },
+            publisher: {
+              '@type': 'Organization',
+              name: config.brand.name
+            },
+            mainEntityOfPage: `${siteUrl}/#/writing/${item.slug}`
+          }}
         />
       );
     }
@@ -399,6 +422,26 @@ function App() {
           nextLabel="下一章"
           prevEndText="已到第一章"
           nextEndText="已到最后一章"
+          structuredData={{
+            '@context': 'https://schema.org',
+            '@type': 'TravelAction',
+            name: item.city,
+            description: item.summary,
+            startTime: item.date,
+            object: {
+              '@type': 'Article',
+              headline: item.city
+            },
+            location: {
+              '@type': 'Place',
+              name: item.city
+            },
+            agent: {
+              '@type': 'Person',
+              name: config.brand.name
+            },
+            url: `${siteUrl}/#/travel/${item.slug}`
+          }}
         />
       );
     }
@@ -418,7 +461,28 @@ function App() {
         .filter(Boolean)
         .join('\n');
       const backHref = route.page ? buildListPageHref('works', route.page) : '#works';
-      detailContent = <DetailPage title={item.name} markdown={markdown} backHref={backHref} meta={meta} />;
+      detailContent = (
+        <DetailPage
+          title={item.name}
+          markdown={markdown}
+          backHref={backHref}
+          meta={meta}
+          structuredData={{
+            '@context': 'https://schema.org',
+            '@type': 'SoftwareApplication',
+            name: item.name,
+            description: item.desc,
+            applicationCategory: 'MobileApplication',
+            operatingSystem: item.platforms?.map((platform) => platform.name).join(', ') || 'iOS, Android',
+            url: item.website || `${siteUrl}/#/works/${encodeURIComponent(item.name)}`,
+            dateModified: item.updatedAt,
+            author: {
+              '@type': 'Person',
+              name: config.brand.name
+            }
+          }}
+        />
+      );
     }
   }
 

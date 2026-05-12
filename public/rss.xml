@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0">
+<channel>
+<title>DonGuo Blog</title>
+<link>https://jingluoguo.github.io/noctics</link>
+<description>技术文章、作品与游记更新</description>
+<lastBuildDate>Tue, 12 May 2026 17:04:12 GMT</lastBuildDate>
+<item><title>Kyoto</title><link>https://jingluoguo.github.io/noctics/#/travel/kyoto-rain-night</link><guid>https://jingluoguo.github.io/noctics/#/travel/kyoto-rain-night</guid><pubDate>Wed, 22 Apr 2026 00:00:00 GMT</pubDate><description>一场京都雨夜的街头记录，在慢节奏光影里体会留白。</description><category>travel</category></item><item><title>Flutter 中复杂表单与状态管理实践</title><link>https://jingluoguo.github.io/noctics/#/writing/flutter-form-state-practice</link><guid>https://jingluoguo.github.io/noctics/#/writing/flutter-form-state-practice</guid><pubDate>Mon, 20 Apr 2026 00:00:00 GMT</pubDate><description>拆分输入、校验、提交三层，提升复杂表单的稳定性与可维护性。</description><category>writing</category></item><item><title>从 0 到 1 设计高质量移动端信息架构</title><link>https://jingluoguo.github.io/noctics/#/writing/mobile-information-architecture</link><guid>https://jingluoguo.github.io/noctics/#/writing/mobile-information-architecture</guid><pubDate>Sun, 12 Apr 2026 00:00:00 GMT</pubDate><description>从 0 到 1 设计高质量移动端信息架构 好的信息架构不是“把内容都放进去”，而是让用户 一眼知道重点在哪里 。 少即是多，但不能少到失真。 我会优先保留最关键的层级，再慢慢补充细节。 测试 是点点滴滴 哈哈 是大大方方反反复复</description><category>writing</category></item><item><title>Istanbul</title><link>https://jingluoguo.github.io/noctics/#/travel/istanbul-morning-wind</link><guid>https://jingluoguo.github.io/noctics/#/travel/istanbul-morning-wind</guid><pubDate>Wed, 01 Apr 2026 00:00:00 GMT</pubDate><description>记录城市的美好。</description><category>travel</category></item>
+</channel>
+</rss>

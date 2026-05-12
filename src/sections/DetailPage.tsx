@@ -14,6 +14,7 @@ type DetailPageProps = {
   nextLabel?: string;
   prevEndText?: string;
   nextEndText?: string;
+  structuredData?: Record<string, unknown> | null;
 };
 
 export function DetailPage({
@@ -27,7 +28,8 @@ export function DetailPage({
   prevLabel = '上一篇',
   nextLabel = '下一篇',
   prevEndText = '已到第一篇',
-  nextEndText = '已到最后一篇'
+  nextEndText = '已到最后一篇',
+  structuredData = null
 }: DetailPageProps) {
   const parsedTocItems = useMemo(() => extractTocHeadings(markdown), [markdown]);
   const [tocItems, setTocItems] = useState<TocHeading[]>(parsedTocItems);
@@ -196,6 +198,12 @@ export function DetailPage({
             </span>
           )}
         </nav>
+      )}
+      {structuredData && (
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
+        />
       )}
     </section>
   );
