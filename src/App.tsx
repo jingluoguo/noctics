@@ -285,6 +285,14 @@ function App() {
     }
   };
 
+  const onSearchPageBack = () => {
+    if (window.history.length > 1) {
+      window.history.back();
+      return;
+    }
+    window.location.hash = '#top';
+  };
+
   let detailContent: ReactNode = null;
   if (route?.type === 'writing') {
     const sourceItems = writingScopedItems.some((entry) => entry.slug === route.slug) ? writingScopedItems : writingItems;
@@ -459,6 +467,7 @@ function App() {
           <GlobalSearchPage
             keyword={keywordInput}
             onKeywordChange={onSearchChange}
+            onBack={onSearchPageBack}
             writingItems={writingKeywordItems}
             travelItems={travelKeywordItems}
             workItems={workKeywordItems}

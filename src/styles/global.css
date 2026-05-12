@@ -614,6 +614,49 @@ h3 {
   display: grid;
   gap: 14px;
   overflow-anchor: none;
+  animation: search-enter 280ms ease both;
+}
+
+@keyframes search-enter {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.search-page-head {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.search-page-head h2 {
+  margin: 0;
+}
+
+.search-back-btn {
+  border: 1px solid rgba(151, 180, 219, 0.32);
+  border-radius: 10px;
+  background: rgba(151, 180, 219, 0.08);
+  color: #d6e9ff;
+  width: 34px;
+  height: 34px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background 180ms ease, border-color 180ms ease, color 180ms ease;
+}
+
+.search-back-btn:hover {
+  border-color: rgba(124, 229, 255, 0.42);
+  background: rgba(124, 229, 255, 0.16);
+  color: #ecf7ff;
 }
 
 .search-result-meta {

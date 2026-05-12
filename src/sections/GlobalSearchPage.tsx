@@ -6,6 +6,7 @@ import type { WorkItem } from '../site.config';
 type GlobalSearchPageProps = {
   keyword: string;
   onKeywordChange: (next: string) => void;
+  onBack: () => void;
   writingItems: WritingContentItem[];
   travelItems: TravelContentItem[];
   workItems: WorkItem[];
@@ -14,6 +15,7 @@ type GlobalSearchPageProps = {
 export function GlobalSearchPage({
   keyword,
   onKeywordChange,
+  onBack,
   writingItems,
   travelItems,
   workItems
@@ -43,7 +45,12 @@ export function GlobalSearchPage({
 
   return (
     <section className="container section detail-page global-search-page">
-      <h2>全局搜索</h2>
+      <div className="search-page-head">
+        <button type="button" className="search-back-btn" onClick={onBack} aria-label="返回上一页">
+          <span aria-hidden="true">←</span>
+        </button>
+        <h2>全局搜索</h2>
+      </div>
       <SearchBox
         value={keyword}
         onChange={onLocalKeywordChange}
