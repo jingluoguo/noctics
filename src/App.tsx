@@ -9,9 +9,11 @@ import { Travel } from './sections/Travel';
 import { Photography } from './sections/Photography';
 import { FriendLinks } from './sections/FriendLinks';
 import { Footer } from './components/Footer';
+import { GlobalSearchPage } from './sections/GlobalSearchPage';
 import { useSiteConfig } from './hooks/useSiteConfig';
 import { getTravelItems, getWorkItems, getWritingItems } from './lib/content';
 import { DetailPage } from './sections/DetailPage';
+import { filterTravelByKeyword, filterWorkByKeyword, filterWritingByKeyword } from './lib/search';
 
 function splitHash(hash: string) {
   if (!hash) return { path: '', query: '' };
@@ -43,6 +45,11 @@ function parseListHash(hash: string) {
   return { type: match[1] as 'works' | 'writing' | 'travel', page };
 }
 
+function parseSearchHash(hash: string) {
+  const { path } = splitHash(hash);
+  return path === '#/search';
+}
+
 function parseTagFromHash(hash: string) {
   const { query } = splitHash(hash);
   if (!query) return null;
@@ -50,17 +57,36 @@ function parseTagFromHash(hash: string) {
   return tag || null;
 }
 
-function withTag(path: string, tag?: string | null) {
-  if (!tag) return path;
-  return `${path}?tag=${encodeURIComponent(tag)}`;
+function parseKeywordFromHash(hash: string) {
+  const { query } = splitHash(hash);
+  if (!query) return '';
+  return new URLSearchParams(query).get('q')?.trim() ?? '';
 }
 
-function buildListPageHref(type: 'works' | 'writing' | 'travel', page: number, tag?: string | null) {
-  return withTag(`#/${type}/page/${page}`, tag);
+function withQuery(path: string, options: { tag?: string | null; keyword?: string }) {
+  const params = new URLSearchParams();
+  const tag = options.tag?.trim();
+  const keyword = options.keyword?.trim();
+  if (tag) params.set('tag', tag);
+  if (keyword) params.set('q', keyword);
+  const query = params.toString();
+  return query ? `${path}?${query}` : path;
 }
 
-function buildSectionHref(type: 'works' | 'writing' | 'travel', tag?: string | null) {
-  return withTag(`#${type}`, tag);
+function buildListPageHref(type: 'works' | 'writing' | 'travel', page: number, options?: { tag?: string | null; keyword?: string }) {
+  return withQuery(`#/${type}/page/${page}`, options ?? {});
+}
+
+function buildSectionHref(type: 'works' | 'writing' | 'travel', options?: { tag?: string | null; keyword?: string }) {
+  return withQuery(`#${type}`, options ?? {});
+}
+
+function buildTopHref(options?: { keyword?: string }) {
+  return withQuery('#top', { keyword: options?.keyword });
+}
+
+function buildSearchHref(keyword?: string) {
+  return withQuery('#/search', { keyword });
 }
 
 function filterByTag<T extends { tags: string[] }>(items: T[], tag: string | null) {
@@ -113,13 +139,15 @@ function Pagination({
   page,
   total,
   pageSize,
-  activeTag
+  activeTag,
+  keyword
 }: {
   type: 'works' | 'writing' | 'travel';
   page: number;
   total: number;
   pageSize: number;
   activeTag?: string | null;
+  keyword?: string;
 }) {
   const pageCount = Math.max(1, Math.ceil(total / pageSize));
   if (pageCount <= 1) return null;
@@ -132,7 +160,7 @@ function Pagination({
     <div className="container pagination">
       <a
         className={`pagination-link ${currentPage <= 1 ? 'pagination-disabled' : ''}`}
-        href={buildListPageHref(type, prevPage, activeTag)}
+        href={buildListPageHref(type, prevPage, { tag: activeTag, keyword })}
       >
         上一页
       </a>
@@ -146,7 +174,7 @@ function Pagination({
             <a
               key={`${type}-page-${item}`}
               className={`pagination-link ${item === currentPage ? 'pagination-current' : ''}`}
-              href={buildListPageHref(type, item, activeTag)}
+              href={buildListPageHref(type, item, { tag: activeTag, keyword })}
             >
               {item}
             </a>
@@ -155,7 +183,7 @@ function Pagination({
       </div>
       <a
         className={`pagination-link ${currentPage >= pageCount ? 'pagination-disabled' : ''}`}
-        href={buildListPageHref(type, nextPage, activeTag)}
+        href={buildListPageHref(type, nextPage, { tag: activeTag, keyword })}
       >
         下一页
       </a>
@@ -202,8 +230,11 @@ function App() {
 
   const route = useMemo(() => parseHash(hash), [hash]);
   const listRoute = useMemo(() => parseListHash(hash), [hash]);
+  const isSearchRoute = useMemo(() => parseSearchHash(hash), [hash]);
   const sectionHash = useMemo(() => parseSectionHash(hash), [hash]);
   const hashTag = useMemo(() => parseTagFromHash(hash), [hash]);
+  const hashKeyword = useMemo(() => parseKeywordFromHash(hash), [hash]);
+  const [keywordInput, setKeywordInput] = useState(hashKeyword);
   const writingItems = useMemo(() => getWritingItems(), []);
   const travelItems = useMemo(() => getTravelItems(), []);
   const workItems = useMemo(() => getWorkItems(), []);
@@ -212,8 +243,47 @@ function App() {
   const currentSectionType = route?.type ?? listRoute?.type ?? (sectionHash === 'writing' || sectionHash === 'travel' || sectionHash === 'works' ? sectionHash : null);
   const writingTag = currentSectionType === 'writing' ? hashTag : null;
   const travelTag = currentSectionType === 'travel' ? hashTag : null;
-  const writingScopedItems = useMemo(() => filterByTag(writingItems, writingTag), [writingItems, writingTag]);
-  const travelScopedItems = useMemo(() => filterByTag(travelItems, travelTag), [travelItems, travelTag]);
+  const effectiveKeyword = isSearchRoute ? keywordInput : hashKeyword;
+  const writingKeywordItems = useMemo(() => filterWritingByKeyword(writingItems, effectiveKeyword), [writingItems, effectiveKeyword]);
+  const travelKeywordItems = useMemo(() => filterTravelByKeyword(travelItems, effectiveKeyword), [travelItems, effectiveKeyword]);
+  const workKeywordItems = useMemo(() => filterWorkByKeyword(workItems, effectiveKeyword), [workItems, effectiveKeyword]);
+  const writingScopedItems = useMemo(() => filterByTag(writingKeywordItems, writingTag), [writingKeywordItems, writingTag]);
+  const travelScopedItems = useMemo(() => filterByTag(travelKeywordItems, travelTag), [travelKeywordItems, travelTag]);
+
+  useEffect(() => {
+    setKeywordInput(hashKeyword);
+  }, [hashKeyword]);
+
+  const updateHashWithoutJump = (nextHash: string) => {
+    const nextUrl = `${window.location.pathname}${window.location.search}${nextHash}`;
+    window.history.replaceState(null, '', nextUrl);
+    setHash(nextHash);
+  };
+
+  const onSearchChange = (nextKeyword: string) => {
+    setKeywordInput(nextKeyword);
+    if (isSearchRoute) {
+      return;
+    }
+    if (currentSectionType === 'writing') {
+      const nextHash = buildSectionHref('writing', { tag: writingTag, keyword: nextKeyword });
+      if (nextHash !== hash) {
+        updateHashWithoutJump(nextHash);
+      }
+      return;
+    }
+    if (currentSectionType === 'travel') {
+      const nextHash = buildSectionHref('travel', { tag: travelTag, keyword: nextKeyword });
+      if (nextHash !== hash) {
+        updateHashWithoutJump(nextHash);
+      }
+      return;
+    }
+    const nextHash = buildSearchHref(nextKeyword);
+    if (nextHash !== hash) {
+      updateHashWithoutJump(nextHash);
+    }
+  };
 
   let detailContent: ReactNode = null;
   if (route?.type === 'writing') {
@@ -222,11 +292,13 @@ function App() {
     const item = currentIndex >= 0 ? sourceItems[currentIndex] : undefined;
     if (item && currentIndex >= 0) {
       const meta = [item.updatedAt ? `更新于 ${item.updatedAt}` : '', item.category, ...item.tags.map((tag) => `#${tag}`)].filter(Boolean) as string[];
-      const backHref = route.page ? buildListPageHref('writing', route.page, writingTag) : buildSectionHref('writing', writingTag);
+      const backHref = route.page
+        ? buildListPageHref('writing', route.page, { tag: writingTag, keyword: effectiveKeyword })
+        : buildSectionHref('writing', { tag: writingTag, keyword: effectiveKeyword });
       const prevEntry = sourceItems[currentIndex - 1];
       const nextEntry = sourceItems[currentIndex + 1];
       const buildWritingDetailHref = (slug: string) =>
-        withTag(`#/writing/${slug}${route.page ? `/page/${route.page}` : ''}`, writingTag);
+        withQuery(`#/writing/${slug}${route.page ? `/page/${route.page}` : ''}`, { tag: writingTag, keyword: effectiveKeyword });
       detailContent = (
         <DetailPage
           title={item.title}
@@ -245,11 +317,13 @@ function App() {
     const item = currentIndex >= 0 ? sourceItems[currentIndex] : undefined;
     if (item && currentIndex >= 0) {
       const meta = [item.date, ...item.tags.map((tag) => `#${tag}`)].filter(Boolean) as string[];
-      const backHref = route.page ? buildListPageHref('travel', route.page, travelTag) : buildSectionHref('travel', travelTag);
+      const backHref = route.page
+        ? buildListPageHref('travel', route.page, { tag: travelTag, keyword: effectiveKeyword })
+        : buildSectionHref('travel', { tag: travelTag, keyword: effectiveKeyword });
       const prevEntry = sourceItems[currentIndex - 1];
       const nextEntry = sourceItems[currentIndex + 1];
       const buildTravelDetailHref = (slug: string) =>
-        withTag(`#/travel/${slug}${route.page ? `/page/${route.page}` : ''}`, travelTag);
+        withQuery(`#/travel/${slug}${route.page ? `/page/${route.page}` : ''}`, { tag: travelTag, keyword: effectiveKeyword });
       detailContent = (
         <DetailPage
           title={item.city}
@@ -307,18 +381,25 @@ function App() {
     listContent = (
       <>
         <section className="container section detail-page">
-          <a className="detail-back" href={buildSectionHref('writing', writingTag)}>返回</a>
+          <a className="detail-back" href={buildSectionHref('writing', { tag: writingTag, keyword: effectiveKeyword })}>返回</a>
           <Writing
             config={config}
             items={pagedItems}
             listPage={page}
             activeTag={writingTag}
             availableTags={writingTags}
-            tagHrefBuilder={(tag) => buildListPageHref('writing', 1, tag)}
+            tagHrefBuilder={(tag) => buildListPageHref('writing', 1, { tag, keyword: effectiveKeyword })}
             detailTag={writingTag}
           />
         </section>
-        <Pagination type="writing" page={page} total={writingScopedItems.length} pageSize={pageSize} activeTag={writingTag} />
+        <Pagination
+          type="writing"
+          page={page}
+          total={writingScopedItems.length}
+          pageSize={pageSize}
+          activeTag={writingTag}
+          keyword={effectiveKeyword}
+        />
       </>
     );
   }
@@ -329,18 +410,18 @@ function App() {
     listContent = (
       <>
         <section className="container section detail-page">
-          <a className="detail-back" href={buildSectionHref('travel', travelTag)}>返回</a>
+          <a className="detail-back" href={buildSectionHref('travel', { tag: travelTag, keyword: effectiveKeyword })}>返回</a>
           <Travel
             config={config}
             items={pagedItems}
             listPage={page}
             activeTag={travelTag}
             availableTags={travelTags}
-            tagHrefBuilder={(tag) => buildListPageHref('travel', 1, tag)}
+            tagHrefBuilder={(tag) => buildListPageHref('travel', 1, { tag, keyword: effectiveKeyword })}
             detailTag={travelTag}
           />
         </section>
-        <Pagination type="travel" page={page} total={travelScopedItems.length} pageSize={pageSize} activeTag={travelTag} />
+        <Pagination type="travel" page={page} total={travelScopedItems.length} pageSize={pageSize} activeTag={travelTag} keyword={effectiveKeyword} />
       </>
     );
   }
@@ -370,10 +451,18 @@ function App() {
       <div className="mesh mesh-a" />
       <div className="mesh mesh-b" />
       <div className="mesh mesh-c" />
-      <Header config={config} />
+      <Header config={config} onSearchClick={() => (window.location.hash = buildSearchHref(keywordInput))} />
       <main>
         {detailContent ? (
           detailContent
+        ) : isSearchRoute ? (
+          <GlobalSearchPage
+            keyword={keywordInput}
+            onKeywordChange={onSearchChange}
+            writingItems={writingKeywordItems}
+            travelItems={travelKeywordItems}
+            workItems={workKeywordItems}
+          />
         ) : listContent ? (
           listContent
         ) : (
@@ -382,14 +471,14 @@ function App() {
             <Works config={config} items={workItems.slice(0, 6)} moreHref="#/works/page/1" moreLabel="浏览全部作品" />
             <Writing
               config={config}
-              items={writingItems.slice(0, 6)}
-              moreHref={buildListPageHref('writing', 1)}
+              items={writingKeywordItems.slice(0, 6)}
+              moreHref={buildListPageHref('writing', 1, { keyword: effectiveKeyword })}
               moreLabel="浏览全部文章"
             />
             <Travel
               config={config}
-              items={travelItems.slice(0, 6)}
-              moreHref={buildListPageHref('travel', 1)}
+              items={travelKeywordItems.slice(0, 6)}
+              moreHref={buildListPageHref('travel', 1, { keyword: effectiveKeyword })}
               moreLabel="浏览全部游记"
             />
             <Photography config={config} />
