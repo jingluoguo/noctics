@@ -1,4 +1,5 @@
 import type { SiteConfig } from '../site.config';
+import { withBaseAssetUrl } from '../lib/asset';
 
 type FriendLinksProps = {
   config: SiteConfig;
@@ -24,7 +25,7 @@ export function FriendLinks({ config }: FriendLinksProps) {
             rel="noreferrer noopener"
           >
             <div className="friend-link-head">
-              {item.avatar ? <img className="friend-link-avatar" src={item.avatar} alt={item.name} loading="lazy" /> : null}
+              {item.avatar ? <img className="friend-link-avatar" src={withBaseAssetUrl(item.avatar)} alt={item.name} loading="lazy" /> : null}
               <strong>{item.name}</strong>
             </div>
             {item.desc ? <span>{item.desc}</span> : null}

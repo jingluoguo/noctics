@@ -2,6 +2,7 @@ import { MouseTilt } from '../components/MouseTilt';
 import { getTravelItems } from '../lib/content';
 import type { TravelContentItem } from '../lib/content';
 import type { SiteConfig } from '../site.config';
+import { withBaseAssetUrl } from '../lib/asset';
 
 type TravelProps = {
   config: SiteConfig;
@@ -67,7 +68,7 @@ export function Travel({
               <a className="travel-link" href={withTag(`#/travel/${trip.slug}${listPage ? `/page/${listPage}` : ''}`, detailTag)}>
                 <div className="travel-cover-wrap" style={{ ['--cover-ar' as string]: section.coverAspectRatio ?? '16 / 9' }}>
                   {trip.cover ? (
-                    <img className="travel-cover" src={trip.cover} alt={trip.city} loading="lazy" />
+                    <img className="travel-cover" src={withBaseAssetUrl(trip.cover)} alt={trip.city} loading="lazy" />
                   ) : (
                     <span className="travel-cover-fallback">{trip.city}</span>
                   )}

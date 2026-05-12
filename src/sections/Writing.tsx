@@ -1,6 +1,7 @@
 import { getWritingItems } from '../lib/content';
 import type { WritingContentItem } from '../lib/content';
 import type { SiteConfig } from '../site.config';
+import { withBaseAssetUrl } from '../lib/asset';
 
 type WritingProps = {
   config: SiteConfig;
@@ -69,7 +70,7 @@ export function Writing({
               >
                 <span className="article-cover-wrap" style={{ ['--cover-ar' as string]: section.coverAspectRatio ?? '16 / 9' }}>
                   {post.cover ? (
-                    <img className="article-cover" src={post.cover} alt={post.title} loading="lazy" />
+                    <img className="article-cover" src={withBaseAssetUrl(post.cover)} alt={post.title} loading="lazy" />
                   ) : (
                     <span className="article-cover-fallback">{post.title}</span>
                   )}

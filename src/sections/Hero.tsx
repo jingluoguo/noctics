@@ -1,6 +1,7 @@
 import { useEffect } from 'react';
 import { HeroParticles } from '../components/HeroParticles';
 import type { SiteConfig } from '../site.config';
+import { withBaseAssetUrl } from '../lib/asset';
 
 export function Hero({ config }: { config: SiteConfig }) {
   useEffect(() => {
@@ -27,7 +28,7 @@ export function Hero({ config }: { config: SiteConfig }) {
         <div className="hero-copy-block">
           {profile && (
             <div className="hero-profile">
-              <img className="hero-profile-avatar" src={profile.avatar} alt={profile.nickname} />
+              <img className="hero-profile-avatar" src={withBaseAssetUrl(profile.avatar)} alt={profile.nickname} />
               <div className="hero-profile-content">
                 <strong className="hero-profile-name">{profile.nickname}</strong>
                 {profile.headline && <p className="hero-profile-headline">{profile.headline}</p>}

@@ -2,6 +2,7 @@ import { MouseTilt } from '../components/MouseTilt';
 import { getWorkItems } from '../lib/content';
 import type { SiteConfig } from '../site.config';
 import type { WorkItem } from '../site.config';
+import { withBaseAssetUrl } from '../lib/asset';
 
 type WorksProps = {
   config: SiteConfig;
@@ -45,7 +46,7 @@ export function Works({ config, items, listPage, moreHref, moreLabel }: WorksPro
             <div className="work-link" role={app.website ? 'link' : undefined} tabIndex={app.website ? 0 : undefined}>
               <div className="work-head">
                 {app.logo ? (
-                  <img className="work-logo" src={app.logo} alt={`${app.name} logo`} />
+                  <img className="work-logo" src={withBaseAssetUrl(app.logo)} alt={`${app.name} logo`} />
                 ) : (
                   <div className="work-logo work-logo-fallback" aria-hidden="true">
                     {app.name.slice(0, 1).toUpperCase()}

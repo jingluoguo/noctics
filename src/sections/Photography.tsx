@@ -1,5 +1,6 @@
 import { MouseTilt } from '../components/MouseTilt';
 import { getPhotographyItems } from '../lib/content';
+import { withBaseAssetUrl } from '../lib/asset';
 import type { SiteConfig } from '../site.config';
 
 export function Photography({ config }: { config: SiteConfig }) {
@@ -13,7 +14,7 @@ export function Photography({ config }: { config: SiteConfig }) {
         {items.map((item) => (
           <MouseTilt key={item.title} className="photo-block tilt-card">
             {item.image ? (
-              <img className={`photo-image photo-${item.h}`} src={item.image} alt={item.title} loading="lazy" />
+              <img className={`photo-image photo-${item.h}`} src={withBaseAssetUrl(item.image)} alt={item.title} loading="lazy" />
             ) : (
               <div className={`photo-placeholder photo-${item.tone} photo-${item.h}`} />
             )}

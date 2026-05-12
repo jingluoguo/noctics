@@ -9,6 +9,7 @@ import css from 'highlight.js/lib/languages/css';
 import markdown from 'highlight.js/lib/languages/markdown';
 import yaml from 'highlight.js/lib/languages/yaml';
 import dart from 'highlight.js/lib/languages/dart';
+import { withBaseAssetUrl } from '../lib/asset';
 
 type MarkdownProps = {
   content: string;
@@ -125,7 +126,7 @@ function parseInline(text: string): string {
   const escaped = escapeHtml(text);
 
   return escaped
-    .replace(/!\[([^\]]*)\]\(([^)]+)\)/g, '<img alt="$1" src="$2" />')
+    .replace(/!\[([^\]]*)\]\(([^)]+)\)/g, (_, alt: string, src: string) => `<img alt="${alt}" src="${withBaseAssetUrl(src)}" />`)
     .replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" target="_blank" rel="noreferrer">$1</a>')
     .replace(/`([^`]+)`/g, '<code>$1</code>')
     .replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>')

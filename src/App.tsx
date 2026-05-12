@@ -14,6 +14,7 @@ import { useSiteConfig } from './hooks/useSiteConfig';
 import { getTravelItems, getWorkItems, getWritingItems } from './lib/content';
 import { DetailPage } from './sections/DetailPage';
 import { filterTravelByKeyword, filterWorkByKeyword, filterWritingByKeyword } from './lib/search';
+import { withBaseAssetUrl } from './lib/asset';
 
 function splitHash(hash: string) {
   if (!hash) return { path: '', query: '' };
@@ -223,7 +224,8 @@ function App() {
   }, [config.seo.title]);
 
   useEffect(() => {
-    const iconUrl = `${config.seo.icon}${config.seo.icon.includes('?') ? '&' : '?'}v=1`;
+    const normalizedIcon = withBaseAssetUrl(config.seo.icon);
+    const iconUrl = `${normalizedIcon}${normalizedIcon.includes('?') ? '&' : '?'}v=1`;
     const iconRels = ['icon', 'shortcut icon', 'apple-touch-icon'];
 
     for (const rel of iconRels) {
