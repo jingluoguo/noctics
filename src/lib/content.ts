@@ -8,6 +8,8 @@ export type WritingContentItem = {
   title: string;
   markdown: string;
   summary: string;
+  wordCount: number;
+  readingMinutes: number;
   cover?: string;
   category?: string;
   updatedAt?: string;
@@ -116,6 +118,22 @@ function pickSummary(summary: string | undefined, markdown: string) {
   return toSummary(markdown);
 }
 
+function countWords(markdown: string) {
+  const text = toSummary(markdown);
+  const cjkChars = (text.match(/[\u3400-\u9FFF]/g) ?? []).length;
+  const latinWords = text
+    .replace(/[\u3400-\u9FFF]/g, ' ')
+    .trim()
+    .split(/\s+/)
+    .filter(Boolean).length;
+  return cjkChars + latinWords;
+}
+
+function estimateReadingMinutes(wordCount: number) {
+  // For mixed Chinese/English technical articles, 300 chars/words per minute is a practical baseline.
+  return Math.max(1, Math.ceil(wordCount / 300));
+}
+
 export function getWritingItems(): WritingContentItem[] {
   const localItems = Object.entries(writingMarkdownModules)
     .sort(([a], [b]) => b.localeCompare(a))
@@ -123,11 +141,14 @@ export function getWritingItems(): WritingContentItem[] {
       const { frontMatter, content } = parseFrontMatter(markdown);
       const title = getFileTitle(filePath, content);
       const normalized = normalizeMarkdown(content, title);
+      const wordCount = countWords(normalized);
       return {
         slug: toSlug(getFileName(filePath)),
         title,
         markdown: normalized,
         summary: pickSummary(frontMatter.summary, normalized),
+        wordCount,
+        readingMinutes: estimateReadingMinutes(wordCount),
         cover: frontMatter.cover,
         category: frontMatter.category,
         updatedAt: frontMatter.updatedat,
@@ -142,6 +163,8 @@ export function getWritingItems(): WritingContentItem[] {
     title: item.title,
     markdown: item.markdown,
     summary: pickSummary(item.summary, item.markdown),
+    wordCount: countWords(item.markdown),
+    readingMinutes: estimateReadingMinutes(countWords(item.markdown)),
     cover: item.cover,
     category: item.category,
     updatedAt: item.updatedAt,

@@ -37,9 +37,14 @@ export function Writing({ config, items, listPage, moreHref, moreLabel }: Writin
               </span>
               <span className="article-main">
                 <strong>{post.title}</strong>
-                {(post.updatedAt || post.category || post.tags?.length) && (
+                {(post.updatedAt || post.category || post.tags?.length || post.wordCount > 0) && (
                   <span className="article-meta">
                     {post.updatedAt && <span className="item-updated-at">更新于 {post.updatedAt}</span>}
+                    {post.wordCount > 0 && (
+                      <span className="item-updated-at">
+                        {post.wordCount} 字 · 预计 {post.readingMinutes} 分钟
+                      </span>
+                    )}
                     {post.category && <span className="article-category">{post.category}</span>}
                     {post.tags?.map((tag) => (
                       <span key={`${post.title}-${tag}`} className="article-tag">
