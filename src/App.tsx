@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState, type ReactNode } from 'react';
+import { useEffect, useMemo, useRef, useState, type ReactNode } from 'react';
 import { Header } from './components/Header';
 import { MouseAura } from './components/MouseAura';
 import { CustomCursor } from './components/CustomCursor';
@@ -61,6 +61,20 @@ function parseKeywordFromHash(hash: string) {
   const { query } = splitHash(hash);
   if (!query) return '';
   return new URLSearchParams(query).get('q')?.trim() ?? '';
+}
+
+function shouldInstantSectionJump(previousHash: string, sectionId: string) {
+  const previousRoute = parseHash(previousHash);
+  if (!previousRoute) return false;
+  return previousRoute.type === sectionId;
+}
+
+function buildPageTransitionKey(hash: string) {
+  const { path, query } = splitHash(hash);
+  const safePath = path || '#top';
+  const tag = new URLSearchParams(query).get('tag')?.trim();
+  if (!tag) return safePath;
+  return `${safePath}?tag=${tag}`;
 }
 
 function withQuery(path: string, options: { tag?: string | null; keyword?: string }) {
@@ -194,6 +208,11 @@ function Pagination({
 function App() {
   const config = useSiteConfig();
   const [hash, setHash] = useState(window.location.hash);
+  const previousHashRef = useRef(hash);
+  const [pageDirection, setPageDirection] = useState<'forward' | 'back'>('forward');
+  const initialPageKey = buildPageTransitionKey(window.location.hash);
+  const navStackRef = useRef<string[]>([initialPageKey]);
+  const navIndexRef = useRef(0);
 
   useEffect(() => {
     document.title = config.seo.title;
@@ -218,7 +237,31 @@ function App() {
   }, [config.seo.icon]);
 
   useEffect(() => {
-    const onHashChange = () => setHash(window.location.hash);
+    const onHashChange = () => {
+      const nextHash = window.location.hash;
+      const nextPath = buildPageTransitionKey(nextHash);
+      const stack = navStackRef.current;
+      const currentIndex = navIndexRef.current;
+      const currentPath = stack[currentIndex];
+
+      if (nextPath !== currentPath) {
+        if (currentIndex > 0 && stack[currentIndex - 1] === nextPath) {
+          navIndexRef.current = currentIndex - 1;
+          setPageDirection('back');
+        } else if (currentIndex < stack.length - 1 && stack[currentIndex + 1] === nextPath) {
+          navIndexRef.current = currentIndex + 1;
+          setPageDirection('forward');
+        } else {
+          const nextStack = stack.slice(0, currentIndex + 1);
+          nextStack.push(nextPath);
+          navStackRef.current = nextStack;
+          navIndexRef.current = nextStack.length - 1;
+          setPageDirection('forward');
+        }
+      }
+
+      setHash(nextHash);
+    };
     window.addEventListener('hashchange', onHashChange);
     return () => window.removeEventListener('hashchange', onHashChange);
   }, []);
@@ -231,6 +274,7 @@ function App() {
   const route = useMemo(() => parseHash(hash), [hash]);
   const listRoute = useMemo(() => parseListHash(hash), [hash]);
   const isSearchRoute = useMemo(() => parseSearchHash(hash), [hash]);
+  const pageTransitionKey = useMemo(() => buildPageTransitionKey(hash), [hash]);
   const sectionHash = useMemo(() => parseSectionHash(hash), [hash]);
   const hashTag = useMemo(() => parseTagFromHash(hash), [hash]);
   const hashKeyword = useMemo(() => parseKeywordFromHash(hash), [hash]);
@@ -255,6 +299,17 @@ function App() {
   }, [hashKeyword]);
 
   const updateHashWithoutJump = (nextHash: string) => {
+    const nextPath = buildPageTransitionKey(nextHash);
+    const stack = navStackRef.current;
+    const currentIndex = navIndexRef.current;
+    const currentPath = stack[currentIndex];
+    if (nextPath !== currentPath) {
+      const nextStack = stack.slice(0, currentIndex + 1);
+      nextStack.push(nextPath);
+      navStackRef.current = nextStack;
+      navIndexRef.current = nextStack.length - 1;
+      setPageDirection('forward');
+    }
     const nextUrl = `${window.location.pathname}${window.location.search}${nextHash}`;
     window.history.replaceState(null, '', nextUrl);
     setHash(nextHash);
@@ -440,8 +495,9 @@ function App() {
     if (!sectionId) return;
     const element = document.getElementById(sectionId);
     if (!element) return;
+    const behavior: ScrollBehavior = shouldInstantSectionJump(previousHashRef.current, sectionId) ? 'auto' : 'smooth';
     requestAnimationFrame(() => {
-      element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      element.scrollIntoView({ behavior, block: 'start' });
     });
   }, [hash, route, listRoute]);
 
@@ -452,6 +508,10 @@ function App() {
     });
   }, [listRoute?.type, listRoute?.page]);
 
+  useEffect(() => {
+    previousHashRef.current = hash;
+  }, [hash]);
+
   return (
     <div className="site-shell">
       <CustomCursor />
@@ -461,39 +521,41 @@ function App() {
       <div className="mesh mesh-c" />
       <Header config={config} onSearchClick={() => (window.location.hash = buildSearchHref(keywordInput))} />
       <main>
-        {detailContent ? (
-          detailContent
-        ) : isSearchRoute ? (
-          <GlobalSearchPage
-            keyword={keywordInput}
-            onKeywordChange={onSearchChange}
-            onBack={onSearchPageBack}
-            writingItems={writingKeywordItems}
-            travelItems={travelKeywordItems}
-            workItems={workKeywordItems}
-          />
-        ) : listContent ? (
-          listContent
-        ) : (
-          <>
-            <Hero config={config} />
-            <Works config={config} items={workItems.slice(0, 6)} moreHref="#/works/page/1" moreLabel="浏览全部作品" />
-            <Writing
-              config={config}
-              items={writingKeywordItems.slice(0, 6)}
-              moreHref={buildListPageHref('writing', 1, { keyword: effectiveKeyword })}
-              moreLabel="浏览全部文章"
+        <div key={pageTransitionKey} className={`page-transition page-transition-${pageDirection}`}>
+          {detailContent ? (
+            detailContent
+          ) : isSearchRoute ? (
+            <GlobalSearchPage
+              keyword={keywordInput}
+              onKeywordChange={onSearchChange}
+              onBack={onSearchPageBack}
+              writingItems={writingKeywordItems}
+              travelItems={travelKeywordItems}
+              workItems={workKeywordItems}
             />
-            <Travel
-              config={config}
-              items={travelKeywordItems.slice(0, 6)}
-              moreHref={buildListPageHref('travel', 1, { keyword: effectiveKeyword })}
-              moreLabel="浏览全部游记"
-            />
-            <Photography config={config} />
-            <FriendLinks config={config} />
-          </>
-        )}
+          ) : listContent ? (
+            listContent
+          ) : (
+            <>
+              <Hero config={config} />
+              <Works config={config} items={workItems.slice(0, 6)} moreHref="#/works/page/1" moreLabel="浏览全部作品" />
+              <Writing
+                config={config}
+                items={writingKeywordItems.slice(0, 6)}
+                moreHref={buildListPageHref('writing', 1, { keyword: effectiveKeyword })}
+                moreLabel="浏览全部文章"
+              />
+              <Travel
+                config={config}
+                items={travelKeywordItems.slice(0, 6)}
+                moreHref={buildListPageHref('travel', 1, { keyword: effectiveKeyword })}
+                moreLabel="浏览全部游记"
+              />
+              <Photography config={config} />
+              <FriendLinks config={config} />
+            </>
+          )}
+        </div>
       </main>
       <Footer config={config} />
     </div>

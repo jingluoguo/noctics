@@ -31,7 +31,6 @@ body,
 }
 
 html {
-  scroll-behavior: smooth;
   scrollbar-gutter: stable;
 }
 
@@ -610,23 +609,48 @@ h3 {
   pointer-events: auto;
 }
 
-.global-search-page {
-  display: grid;
-  gap: 14px;
-  overflow-anchor: none;
-  animation: search-enter 280ms ease both;
+.page-transition {
+  animation-duration: 300ms;
+  animation-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
+  animation-fill-mode: both;
 }
 
-@keyframes search-enter {
+.page-transition-forward {
+  animation-name: page-enter-forward;
+}
+
+.page-transition-back {
+  animation-name: page-enter-back;
+}
+
+@keyframes page-enter-forward {
   from {
     opacity: 0;
-    transform: translateY(8px);
+    transform: translate3d(16px, 0, 0);
   }
 
   to {
     opacity: 1;
-    transform: translateY(0);
+    transform: translate3d(0, 0, 0);
   }
+}
+
+@keyframes page-enter-back {
+  from {
+    opacity: 0;
+    transform: translate3d(-16px, 0, 0);
+  }
+
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+.global-search-page {
+  display: grid;
+  gap: 14px;
+  overflow-anchor: none;
 }
 
 .search-page-head {
